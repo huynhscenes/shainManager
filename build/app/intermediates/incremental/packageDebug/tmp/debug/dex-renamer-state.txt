@@ -1,0 +1,4 @@
+#Mon Jun 10 16:03:13 JST 2019
+base.0=/Users/huynhnguyen/AndroidStudioProjects/TheGorgeousLogin-master/build/app/intermediates/transforms/dexMerger/debug/0
+path.0=classes.dex
+renamed.0=classes.dex

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "896966723106",
+    "firebase_url": "https://managescen.firebaseio.com",
+    "project_id": "managescen",
+    "storage_bucket": "managescen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896966723106:android:744c63cf9754b6c6",
+        "android_client_info": {
+          "package_name": "com.huextrat.thegorgeouslogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896966723106-f8o5sdtq12hlmdl1p1ne6mm2ohops0vs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARnsI1GoANZECm3i4sy1T0HMcc5h___Hk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896966723106-f8o5sdtq12hlmdl1p1ne6mm2ohops0vs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
