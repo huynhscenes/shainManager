@@ -21,6 +21,23 @@
                     }
                 },
                 {
+                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/firebase-messaging-15.0.2.aar/07f7af86ff789ed334d81be3eebb441d/res/values-as/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "205",
+                        "endColumns": "99",
+                        "endOffsets": "304"
+                    },
+                    "to": {
+                        "startLines": "20",
+                        "startColumns": "4",
+                        "startOffsets": "2714",
+                        "endColumns": "103",
+                        "endOffsets": "2813"
+                    }
+                },
+                {
                     "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/play-services-basement-16.0.1.aar/ea496e4e4a3ea88394f79a06e5eab993/res/values-as/values.xml",
                     "from": {
                         "startLines": "4",

@@ -4,13 +4,32 @@
             "outputFile": "/Users/huynhnguyen/AndroidStudioProjects/TheGorgeousLogin-master/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/33fd0ce3d342c4e906d7ed0984592113/res/values-v16/values-v16.xml",
+                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/support-compat-27.1.0.aar/1ed854d0ae6de34a0f5b9232c5b1e691/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
                         "startOffsets": "55",
                         "endColumns": "65",
                         "endOffsets": "116"
+                    }
+                },
+                {
+                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.0.aar/9eb4e4a93c4cf2029de877edc218dc2c/res/values-v16/values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "5",
+                        "endColumns": "12",
+                        "endOffsets": "223"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "121",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "289"
                     }
                 }
             ]

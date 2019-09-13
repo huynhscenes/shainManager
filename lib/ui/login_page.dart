@@ -4,13 +4,17 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:the_gorgeous_login/style/theme.dart' as Theme;
 import 'package:the_gorgeous_login/utils/bubble_indication_painter.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:the_gorgeous_login/services/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-var _email;
-var _password;
+import 'homepage.dart';
+
+
 var _errorMessage;
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  LoginPage({ this.auth, this.onSignedIn});
+  final BaseAuth auth;
+  final VoidCallback onSignedIn;
 
   @override
   _LoginPageState createState() => new _LoginPageState();
@@ -18,9 +22,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  final databaseReference = FirebaseDatabase.instance.reference();
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _scaffoldKey = new GlobalKey<FormState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
@@ -49,9 +52,9 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return new Form(
       key: _scaffoldKey,
-      body: NotificationListener<OverscrollIndicatorNotification>(
+      child: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overscroll) {
           overscroll.disallowGlow();
         },
@@ -146,20 +149,20 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void showInSnackBar(String value) {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(
-        value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "WorkSansSemiBold"),
-      ),
-      backgroundColor: Colors.blue,
-      duration: Duration(seconds: 3),
-    ));
+//    FocusScope.of(context).requestFocus(new FocusNode());
+//    _scaffoldKey.currentState?.removeCurrentSnackBar();
+//    _scaffoldKey.currentState.(new SnackBar(
+//      content: new Text(
+//        value,
+//        textAlign: TextAlign.center,
+//        style: TextStyle(
+//            color: Colors.white,
+//            fontSize: 16.0,
+//            fontFamily: "WorkSansSemiBold"),
+//      ),
+//      backgroundColor: Colors.blue,
+//      duration: Duration(seconds: 3),
+//    ));
   }
 
   Widget _buildMenuBar(BuildContext context) {
@@ -228,7 +231,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
                 child: Container(
                   width: 300.0,
-                  height: 190.0,
+                  height: 200.0,
                   child: Column(
                     children: <Widget>[
                       Padding(
@@ -254,7 +257,10 @@ class _LoginPageState extends State<LoginPage>
                                 fontFamily: "WorkSansSemiBold", fontSize: 17.0),
                           ),
                           validator: (value) => value.isEmpty ? "Email can't be Empty":null,
-                          onSaved: (value) => _email=value,
+                          onSaved: (String val) {
+                                 print(val);
+
+                          }
 
                         ),
                       ),
@@ -294,7 +300,6 @@ class _LoginPageState extends State<LoginPage>
                             ),
                           ),
                           validator: (value) => value.isEmpty ? "Password can't be empty": null,
-                          onSaved: (value) => _password = value,
                         ),
                       ),
                     ],
@@ -302,7 +307,7 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 170.0),
+                margin: EdgeInsets.only(top: 180.0),
                 decoration: new BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
@@ -344,7 +349,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
                     onPressed: () {
                       showInSnackBar("Login button pressed");
-                      _showErrorMessage();
+                      _signinButtonconfirm();
 
                     },)
               ),
@@ -613,8 +618,11 @@ class _LoginPageState extends State<LoginPage>
                             fontFamily: "WorkSansBold"),
                       ),
                     ),
-                    onPressed: () =>
-                        showInSnackBar("SignUp button pressed")),
+                    onPressed: () {
+                      showInSnackBar("SignUp button pressed");
+                      _signupButtonconfirm();
+                    }
+                ),
               ),
             ],
           ),
@@ -644,9 +652,65 @@ class _LoginPageState extends State<LoginPage>
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
-  void _onSignUpButtonPress() {
+  void _onSignUpButtonPress()  {
     _pageController?.animateToPage(1,
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+  }
+
+  // Check if form is valid before perform login or signup
+  bool _validateAndSave() {
+    final form = _scaffoldKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void _showVerifyEmailSentDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("おめでとう"),
+          content: new Text("登録できました"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("完了"),
+              onPressed: () {
+                signupNameController.text = '';
+                signupEmailController.text ='';
+                signupPasswordController.text = '';;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _signinButtonconfirm() async{
+    String userId = "";
+    userId = await widget.auth.signIn(loginEmailController.text, loginPasswordController.text);
+    if(userId!=""){
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }
+  }
+
+
+  void _signupButtonconfirm() async{
+
+      if(_validateAndSave()){
+          var userId;
+          userId = await widget.auth.signUp(signupEmailController.text, signupPasswordController.text,signupNameController.text);
+          _showVerifyEmailSentDialog();
+          widget.auth.sendEmailVerification();
+      }
   }
 
   void _toggleLogin() {

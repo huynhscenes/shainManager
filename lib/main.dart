@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_gorgeous_login/ui/login_page.dart';
-
+import 'package:the_gorgeous_login/services/authentication.dart';
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
@@ -12,7 +12,9 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      home: new LoginPage(),
+      home: new LoginPage(
+              auth: new Auth()
+      ),
     );
   }
 }

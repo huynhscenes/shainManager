@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/wifi-0.0.10/android/src/main/assets"/><source path="/Users/huynhnguyen/AndroidStudioProjects/TheGorgeousLogin-master/build/wifi/generated/assets/shaders/debug"/></dataSet><dataSet config="debug"><source path="/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/wifi-0.0.10/android/src/debug/assets"/></dataSet></merger>

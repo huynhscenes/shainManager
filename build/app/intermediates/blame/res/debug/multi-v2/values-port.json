@@ -4,7 +4,7 @@
             "outputFile": "/Users/huynhnguyen/AndroidStudioProjects/TheGorgeousLogin-master/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-port/values-port.xml",
             "map": [
                 {
-                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/support-compat-26.1.0.aar/33fd0ce3d342c4e906d7ed0984592113/res/values-port/values-port.xml",
+                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.0.aar/9eb4e4a93c4cf2029de877edc218dc2c/res/values-port/values-port.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
