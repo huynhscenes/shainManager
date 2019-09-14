@@ -16,6 +16,35 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final databaseReference = FirebaseDatabase.instance.reference();
+  FirebaseUser user;
+  var userdatabase;
+
+  @override
+  void initState() {
+    super.initState();
+    initUser();
+  }
+
+  initUser() async {
+    user = await _auth.currentUser();
+    // userdatabase = await databaseReference.child('users').once().then((snapshot){
+    //           var values = snapshot.value;
+    //       print('test 1' + snapshot.value.toString());
+    //       return snapshot.value[0];
+    // //       values.forEach((key,value){
+    // //         if(user.uid == value[]){
+    // //           print(value['name']);
+    // //           return value['name'];
+    // //         }
+    // // });
+
+    // });
+    // print('test 2' + userdatabase);
+    print('test 3 ' + user.uid.toString());
+    setState(() {});
+  }
 
   String nickname;
 
@@ -36,7 +65,7 @@ class HomePageState extends State<HomePage> {
             }),
         ),
         body: Center(
-          child: Text('heloo world '),
+          child: Text('hello world !!!'),
         ),
         drawer: openmenu(context),
 
@@ -66,7 +95,13 @@ class HomePageState extends State<HomePage> {
                                   ),
                                   Container(
 //                                      height: .0,
-                                      child:Text(Accauthcurrrent().toString()),
+                                      child:Text("${user.uid}"),
+                                            
+                                  ),
+                                  Container(
+//                                      height: .0,
+                                      // child:Text("${}"),
+                                            
                                   ),
 
                               ],
@@ -93,22 +128,33 @@ class HomePageState extends State<HomePage> {
 
       );
   }
-  Accauthcurrrent() {
-      final databaseReference = FirebaseDatabase.instance.reference();
 
-      Future<FirebaseUser> user =  FirebaseAuth.instance.currentUser();
-      var testuser;
+ inforCurrentuser()  {
+   
+ }
 
-      var currentUser = user.then((value){value.uid.toString();});
+  //  super.initState();
+  // //  setState(() {
+  // //       Accauthcurrrent(
 
-      return databaseReference.child('users').once().then((DataSnapshot snapshot){
-          var values = snapshot.value;
-          print('test 1' + snapshot.value.toString());
-          values.forEach((key,value){
+  // //       );
+  // //     });
+  //     final databaseReference = FirebaseDatabase.instance.reference();
+  //     FirebaseUser usercurrent = await FirebaseAuth.instance.currentUser();
+  //     // var currentUser = user.then((value){value.uid.toString();});
 
-          });
-      });
-  }
+  //      databaseReference.child('users').once().then((DataSnapshot snapshot){
+  //         var values = snapshot.value;
+  //         print('test 1' + snapshot.value.toString());
+  //         values.forEach((key,value){
+  //           if(usercurrent.uid == value['userUID']){
+  //             print(value['name']);
+  //             return value['name'];
+  //           }
+
+  //         });
+  //     });
+  // }
 
 
 }

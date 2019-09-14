@@ -7,7 +7,7 @@ abstract class BaseAuth {
 
   Future<String> signUp( email,  password , nickname);
 
-  Future<FirebaseUser> getCurrentUser();
+  Future getCurrentUser();
 
   Future<void> sendEmailVerification();
 
@@ -35,15 +35,19 @@ class Auth implements BaseAuth {
       'email': email,
       'password' : password
     });
+  //   UserUpdateInfo updateInfo = UserUpdateInfo();
+  // updateInfo.displayName = nickname;
+  // user.updateProfile(updateInfo);
+  // // await user.reload();
+  //  print('USERNAME IS: ${user.displayName}');
     return user.uid;
   }
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  Future getCurrentUser() async {
+     FirebaseUser user = await FirebaseAuth.instance.currentUser();
 //    print(user.uid);
 //    FirebaseUser user = await _firebaseAuth.currentUser();
-    print('test111 ' + user.toString());
-    return user;
+    return user.uid;
   }
 
   Future<void> signOut() async {
