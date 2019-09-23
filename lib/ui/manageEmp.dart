@@ -8,26 +8,33 @@ class manageEmp  extends StatefulWidget {
 }
 
 class manageEmpState extends State<manageEmp> {
+  String ssid;
 
-    @override
+  String ip;
+
+  @override
+  void initState() {
+    super.initState();
+    checkWifiSSID();
+  }
+  @override
   Widget build(BuildContext context) {
 
     return Material(
-        child: Center(
-            child: IconButton(
-                    icon: Icon(Icons.menu),
-                    onPressed: (){
-//                        openmenu(context);
-                        checkWifiSSID();
-                    }),
-        )
+        child: Column(
+          children: <Widget>[
+            Text('SSID is : ' + ssid),
+            Text('IPaddress is : ' + ip),
+          ],
+
+        ),
     );
   }
 
     checkWifiSSID() async{
-        String ssid = await Wifi.ssid;
+        ssid = await Wifi.ssid;
 
-        String ip = await Wifi.ip;
+        ip = await Wifi.ip;
 
         var result = await Wifi.connection('ssid', 'password');
         print('this is ssid : ' + ssid);

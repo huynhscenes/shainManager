@@ -20,6 +20,7 @@ class HomePageState extends State<HomePage> {
   final databaseReference = FirebaseDatabase.instance.reference();
   FirebaseUser user;
   var userdatabase;
+  String nicknameDB;
 
   @override
   void initState() {
@@ -29,19 +30,18 @@ class HomePageState extends State<HomePage> {
 
   initUser() async {
     user = await _auth.currentUser();
-    // userdatabase = await databaseReference.child('users').once().then((snapshot){
-    //           var values = snapshot.value;
-    //       print('test 1' + snapshot.value.toString());
-    //       return snapshot.value[0];
-    // //       values.forEach((key,value){
-    // //         if(user.uid == value[]){
-    // //           print(value['name']);
-    // //           return value['name'];
-    // //         }
-    // // });
+    userdatabase = await databaseReference.child('users').once().then((snapshot){
+              var values = snapshot.value;
+          print('test 1' + snapshot.value.toString());
+          values.forEach((key,value){
+            if(user.uid == value['userUID']){
+              print(value['name']);
+                nicknameDB = value['name'];
+            }
+    });
 
-    // });
-    // print('test 2' + userdatabase);
+    });
+    print('test 2' + nicknameDB);
     print('test 3 ' + user.uid.toString());
     setState(() {});
   }
@@ -95,15 +95,9 @@ class HomePageState extends State<HomePage> {
                                   ),
                                   Container(
 //                                      height: .0,
-                                      child:Text("${user.uid}"),
+                                      child:Text(nicknameDB),
                                             
                                   ),
-                                  Container(
-//                                      height: .0,
-                                      // child:Text("${}"),
-                                            
-                                  ),
-
                               ],
 
                           ),
@@ -128,33 +122,5 @@ class HomePageState extends State<HomePage> {
 
       );
   }
-
- inforCurrentuser()  {
-   
- }
-
-  //  super.initState();
-  // //  setState(() {
-  // //       Accauthcurrrent(
-
-  // //       );
-  // //     });
-  //     final databaseReference = FirebaseDatabase.instance.reference();
-  //     FirebaseUser usercurrent = await FirebaseAuth.instance.currentUser();
-  //     // var currentUser = user.then((value){value.uid.toString();});
-
-  //      databaseReference.child('users').once().then((DataSnapshot snapshot){
-  //         var values = snapshot.value;
-  //         print('test 1' + snapshot.value.toString());
-  //         values.forEach((key,value){
-  //           if(usercurrent.uid == value['userUID']){
-  //             print(value['name']);
-  //             return value['name'];
-  //           }
-
-  //         });
-  //     });
-  // }
-
 
 }
