@@ -1,0 +1,6 @@
+framework module wifi {
+  umbrella header "wifi-umbrella.h"
+
+  export *
+  module * { export * }
+}
