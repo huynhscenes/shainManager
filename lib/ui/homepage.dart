@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_gorgeous_login/services/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:the_gorgeous_login/ui/receiptphoto.dart';
 
 import 'manageEmp.dart';
 void main() => runApp(new HomePage());
@@ -22,29 +23,29 @@ class HomePageState extends State<HomePage> {
   var userdatabase;
   String nicknameDB;
 
-  @override
-  void initState() {
-    super.initState();
-    initUser();
-  }
-
-  initUser() async {
-    user = await _auth.currentUser();
-    userdatabase = await databaseReference.child('users').once().then((snapshot){
-              var values = snapshot.value;
-          print('test 1' + snapshot.value.toString());
-          values.forEach((key,value){
-            if(user.uid == value['userUID']){
-              print(value['name']);
-                nicknameDB = value['name'];
-            }
-    });
-
-    });
-    print('test 2' + nicknameDB);
-    print('test 3 ' + user.uid.toString());
-    setState(() {});
-  }
+//  @override
+//  void initState() {
+//    super.initState();
+//    initUser();
+//  }
+//
+//  initUser() async {
+//    user = await _auth.currentUser();
+//    userdatabase = await databaseReference.child('users').once().then((snapshot){
+//              var values = snapshot.value;
+//          print('test 1' + snapshot.value.toString());
+//          values.forEach((key,value){
+//            if(user.uid == value['userUID']){
+//              print(value['name']);
+//                nicknameDB = value['name'];
+//            }
+//    });
+//
+//    });
+//    print('test 2' + nicknameDB);
+//    print('test 3 ' + user.uid.toString());
+//    setState(() {});
+//  }
 
   String nickname;
 
@@ -59,7 +60,6 @@ class HomePageState extends State<HomePage> {
             leading: IconButton(
                     icon: Icon(Icons.menu),
                     onPressed: (){
-                        print(nickname == null ? 'this null' : nickname);
 //                        openmenu(context);
                         _key.currentState.openDrawer();
             }),
@@ -95,7 +95,7 @@ class HomePageState extends State<HomePage> {
                                   ),
                                   Container(
 //                                      height: .0,
-                                      child:Text(nicknameDB),
+//                                      child:Text(nicknameDB),
                                             
                                   ),
                               ],
@@ -114,7 +114,10 @@ class HomePageState extends State<HomePage> {
                       ListTile(
                           title: Text('Item 2'),
                           onTap: (){
-                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => receiptPhoto()),
+                              );
                           },
                       )
                   ],

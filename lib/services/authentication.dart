@@ -21,19 +21,20 @@ class Auth implements BaseAuth {
   final databaseReference = FirebaseDatabase.instance.reference();
 
   Future<String> signIn(String email, String password) async {
-    FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
+    FirebaseUser user = (await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password)).user;
     return user.uid;
   }
   Future<String> signUp( email, password, nickname) async {
     FirebaseUser usercurrent = await FirebaseAuth.instance.currentUser();
-    final FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    databaseReference.reference().child('users').push().set({
+    final FirebaseUser user = (await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password)).user;
+    databaseReference.reference().child('users').child(user.uid).set({
       'userUID' : user.uid,
       'name': nickname,
       'email': email,
-      'password' : password
+      'password' : password,
+      'photo': ''
     });
   //   UserUpdateInfo updateInfo = UserUpdateInfo();
   // updateInfo.displayName = nickname;

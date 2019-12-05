@@ -1,3 +1,10 @@
-firebase_auth=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.6.6/
-firebase_core=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.2.5+1/
-firebase_database=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_database-1.0.3/
+connectivity=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/connectivity-0.4.4/
+e2e=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/e2e-0.2.1+1/
+firebase_auth=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.14.0+5/
+firebase_core=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.4.0+9/
+firebase_database=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_database-3.0.7/
+firebase_storage=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/firebase_storage-3.0.6/
+image_picker=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.6.1+4/
+shared_preferences=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.5.3+4/
+sqflite=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/sqflite-1.1.6+5/
+wifi=/Users/huynhnguyen/Desktop/flutter/.pub-cache/hosted/pub.dartlang.org/wifi-0.1.5/

@@ -1,17 +1,17 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/huynhnguyen/AndroidStudioProjects/TheGorgeousLogin-master/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
+            "outputFile": "/Users/huynhnguyen/shainManager/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.0.aar/9eb4e4a93c4cf2029de877edc218dc2c/res/values-v23/values-v23.xml",
+                    "source": "/Users/huynhnguyen/.gradle/caches/transforms-1/files-1.1/appcompat-1.1.0-alpha01.aar/373955ec728f8ce9cf1a2bd502ef6622/res/values-v23/values-v23.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,19,32,33,34,35,36",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,190,325,400,487,1277,2079,2206,2311,2426,2533",
-                        "endLines": "2,3,4,5,18,31,32,33,34,35,36",
-                        "endColumns": "134,134,74,86,12,12,126,104,114,106,112",
-                        "endOffsets": "185,320,395,482,1272,2074,2201,2306,2421,2528,2641"
+                        "startLines": "2,3,4,5,6,19,32,33,34,38,39,40,41",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,190,325,400,487,1277,2079,2206,2311,2535,2650,2757,2870",
+                        "endLines": "2,3,4,5,18,31,32,33,37,38,39,40,44",
+                        "endColumns": "134,134,74,86,12,12,126,104,12,114,106,112,12",
+                        "endOffsets": "185,320,395,482,1272,2074,2201,2306,2530,2645,2752,2865,3095"
                     }
                 }
             ]

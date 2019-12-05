@@ -9,18 +9,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_database: 1.0.3
-  firebase_auth: ^0.6.6
+  firebase_database: 3.0.7
+  firebase_auth: ^0.14.0+5
   connectivity: ^0.4.3+2
-  wifi: ^0.0.10
+  wifi: ^0.1.5
   shared_preferences: ^0.5.3+4
   cupertino_icons: ^0.1.2
+  image_picker: ^0.6.1+4
+  firebase_storage: ^3.0.6
+  meta: "^1.0.5"
+  flutter_progress_button: '^1.0.0'
+  sqflite: ^1.1.6+5
+  path: ^1.6.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   font_awesome_flutter: ^8.0.1
+  test: any
+  e2e: ^0.2.0
 
 flutter:
 

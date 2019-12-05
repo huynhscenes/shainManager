@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>221458443009-rv2rkd0qqj48d3vrbj33ml3bgvdku50f.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.221458443009-rv2rkd0qqj48d3vrbj33ml3bgvdku50f</string>
+	<key>API_KEY</key>
+	<string>AIzaSyABo3xzomv5i6PbSMnVjjCa7S-8yYZDweE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>221458443009</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.huextrat.thegorgeouslogin</string>
+	<key>PROJECT_ID</key>
+	<string>shainmanage</string>
+	<key>STORAGE_BUCKET</key>
+	<string>shainmanage.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:221458443009:ios:dd70dff47a3378c2c00900</string>
+	<key>DATABASE_URL</key>
+	<string>https://shainmanage.firebaseio.com</string>
+</dict>
+</plist>
