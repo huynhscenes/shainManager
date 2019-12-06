@@ -6,26 +6,32 @@ import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:flutter_progress_button/flutter_progress_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:the_gorgeous_login/sqllite/fetchdata.dart';
 
 import 'dart:math' as math show sin, pi;
 
 class manageEmp extends StatefulWidget {
   @override
-  State createState() => manageEmpState();
+  State createState() => manageEmpState(new AppModel());
 }
 
 class manageEmpState extends State<manageEmp> {
+  AppModel model;
+  manageEmpState(this.model);
+  FetchDatafromSQLite fetchdataSQL;
   String _connectionStatus = 'Unknown';
   String idwifi = '';
   String imgdirenter = '';
   String imgdirout = '';
-  bool enterbutton = false;
-  bool outbutton = false;
+  var enterbutton = false;
+  var outbutton = false;
   var datetimenow;
   var nowhourenter = '';
   var nowminuenter = '';
   var nowhourout = '';
   var nowminuout = '';
+  var nowWorkenter = '';
+  var nowWorkout = '';
   String nowyear = '';
   String nowmonth = '';
   String nowday = '';
@@ -38,6 +44,7 @@ class manageEmpState extends State<manageEmp> {
 
   @override
   void initState() {
+    model.createDB();
     super.initState();
     initConnectivity();
     _connectivitySubscription =
@@ -81,7 +88,7 @@ class manageEmpState extends State<manageEmp> {
           )
         ],
       ),
-      body: Center(child: _goingtoWork(context)),
+      body: Center(child: _goingtoWork(context, model.itemListing)),
     );
   }
 
@@ -171,14 +178,35 @@ class manageEmpState extends State<manageEmp> {
     );
   }
 
-  Widget _goingtoWork(BuildContext context) {
+  Widget _goingtoWork(BuildContext context, List<FetchDatafromSQLite> sldata ) {
     datetimenow = new DateTime.now();
     nowyear = datetimenow.year.toString();
     nowmonth = datetimenow.month.toString();
     nowday = datetimenow.day.toString();
 
-    _getsharedPreEnterbutton();
-    _getsharedPreOutbutton();
+    var setdata = FetchDatafromSQLite(
+        ymdWork: nowyear+nowmonth+nowday,
+        enterbutton: enterbutton,
+        outbutton: outbutton,
+        imgdirenter: imgdirenter,
+        imgdirout: imgdirout,
+        nowWorkenter: nowWorkenter,
+        nowWorkout: nowhourout+nowminuout,
+      );
+    model.fetchDataManager(nowyear+nowmonth+nowday);
+    var todaydatetime = nowyear+nowmonth+nowday;
+
+    print('this is confirm compare datetime ' + sldata[0].ymdWork);
+    if(sldata[0].ymdWork == todaydatetime){
+      enterbutton =true;
+      outbutton =true;
+      imgdirout = sldata[0].imgdirout;
+      nowWorkenter = sldata[0].nowWorkenter;
+      nowWorkout =sldata[0].nowWorkout; 
+    }
+
+    // _getsharedPreEnterbutton();
+    // _getsharedPreOutbutton();
     if (idwifi == '192.168.8.82') {
       return Column(
         mainAxisSize: MainAxisSize.max,
@@ -217,7 +245,9 @@ class manageEmpState extends State<manageEmp> {
                             nowminuenter = (datetimenow.minute < 10
                                 ? '0' + datetimenow.minute.toString() + '分'
                                 : datetimenow.minute.toString() + '分');
-                            _setSharedPreEnterbutton();
+                            nowWorkenter = nowhourenter + nowminuenter;
+                            // _setSharedPreEnterbutton();
+                            model.insertManager(setdata);
                           });
                         },
                 ),
@@ -251,14 +281,15 @@ class manageEmpState extends State<manageEmp> {
                             nowminuout = (datetimenow.minute < 10
                                 ? '0' + datetimenow.minute.toString() + '分'
                                 : datetimenow.minute.toString() + '分');
-                            _setSharedPreOutbutton();
+                            nowWorkout = nowhourout + nowminuout;
+                            // _setSharedPreOutbutton();
                           });
                         },
                 ),
               ],
             ),
           ),
-          timeToWork(nowhourenter, nowminuenter, nowhourout, nowminuout)
+          timeToWork(nowWorkenter, nowWorkout)
         ],
       );
     } else {
@@ -266,7 +297,7 @@ class manageEmpState extends State<manageEmp> {
     }
   }
 
-  Widget timeToWork(nowhourenter, nowminuenter, nowhourout, nowminuout) {
+  Widget timeToWork(nowWorkenter, nowWorkout) {
     return Column(
       children: <Widget>[
         Container(
@@ -286,7 +317,7 @@ class manageEmpState extends State<manageEmp> {
             Container(
               padding: EdgeInsets.only(
                   left: 80.0, top: 10.0, bottom: 10.0, right: 10.0),
-              child: Text('出勤の時間　：    ' + nowhourenter + nowminuenter),
+              child: Text('出勤の時間　：    ' + nowWorkenter),
             ),
             Container()
           ],
@@ -296,7 +327,7 @@ class manageEmpState extends State<manageEmp> {
             Container(
               padding: EdgeInsets.only(
                   left: 80.0, top: 10.0, bottom: 10.0, right: 10.0),
-              child: Text('退勤の時間　：    ' + nowhourout + nowminuout),
+              child: Text('退勤の時間　：    ' + nowWorkout),
             ),
             Container()
           ],
@@ -311,62 +342,62 @@ class manageEmpState extends State<manageEmp> {
     );
   }
 
-  _setSharedPreEnterbutton() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    stringalldatetimeSavedEnter = nowyear + nowmonth + nowday;
-    pref.setBool('enterbutton', enterbutton);
-    pref.setString('imgdirenter', imgdirenter);
-    pref.setString('nowhourenter', nowhourenter);
-    pref.setString('nowminuenter', nowminuenter);
-    pref.setString('stringalldatetimeSavedEnter', stringalldatetimeSavedEnter);
-  }
+  // _setSharedPreEnterbutton() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   stringalldatetimeSavedEnter = nowyear + nowmonth + nowday;
+  //   pref.setBool('enterbutton', enterbutton);
+  //   pref.setString('imgdirenter', imgdirenter);
+  //   pref.setString('nowhourenter', nowhourenter);
+  //   pref.setString('nowminuenter', nowminuenter);
+  //   pref.setString('stringalldatetimeSavedEnter', stringalldatetimeSavedEnter);
+  // }
 
-  _getsharedPreEnterbutton() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    stringalldatetimeSavedEnter = pref.getString('stringalldatetimeSavedEnter');
+  // _getsharedPreEnterbutton() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   stringalldatetimeSavedEnter = pref.getString('stringalldatetimeSavedEnter');
 
-    stringalldatetimeNowEnter = nowyear + nowmonth + nowday;
-    if (stringalldatetimeNowEnter != stringalldatetimeSavedEnter) {
-      pref.remove('enterbutton');
-      pref.remove('imgdirenter');
-      pref.remove('nowhourenter');
-      pref.remove('nowminuenter');
-    } else if (pref.getBool('enterbutton') == true) {
-      enterbutton = pref.getBool('enterbutton');
-      imgdirenter = pref.getString('imgdirenter');
-      nowhourenter = pref.getString('nowhourenter');
-      nowminuenter = pref.getString('nowminuenter');
-    }
-  }
+  //   stringalldatetimeNowEnter = nowyear + nowmonth + nowday;
+  //   if (stringalldatetimeNowEnter != stringalldatetimeSavedEnter) {
+  //     pref.remove('enterbutton');
+  //     pref.remove('imgdirenter');
+  //     pref.remove('nowhourenter');
+  //     pref.remove('nowminuenter');
+  //   } else if (pref.getBool('enterbutton') == true) {
+  //     enterbutton = pref.getBool('enterbutton');
+  //     imgdirenter = pref.getString('imgdirenter');
+  //     nowhourenter = pref.getString('nowhourenter');
+  //     nowminuenter = pref.getString('nowminuenter');
+  //   }
+  // }
 
-  _setSharedPreOutbutton() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    stringalldatetimeSavedOut = nowyear + nowmonth + nowday;
-    pref.setBool('outbutton', outbutton);
-    pref.setString('imgdirout', imgdirout);
-    pref.setString('nowhourout', nowhourout);
-    pref.setString('nowminuout', nowminuout);
-    pref.setString('stringalldatetimeSavedOut', stringalldatetimeSavedOut);
-  }
+  // _setSharedPreOutbutton() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+  //   stringalldatetimeSavedOut = nowyear + nowmonth + nowday;
+  //   pref.setBool('outbutton', outbutton);
+  //   pref.setString('imgdirout', imgdirout);
+  //   pref.setString('nowhourout', nowhourout);
+  //   pref.setString('nowminuout', nowminuout);
+  //   pref.setString('stringalldatetimeSavedOut', stringalldatetimeSavedOut);
+  // }
 
-  _getsharedPreOutbutton() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
+  // _getsharedPreOutbutton() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
 
-    stringalldatetimeSavedOut = pref.getString('stringalldatetimeSavedOut');
+  //   stringalldatetimeSavedOut = pref.getString('stringalldatetimeSavedOut');
 
-    stringalldatetimeNowOut = nowyear + nowmonth + nowday;
-    if (stringalldatetimeNowOut != stringalldatetimeSavedOut) {
-      pref.remove('outbutton');
-      pref.remove('imgdirout');
-      pref.remove('nowhourout');
-      pref.remove('nowminuout');
-    } else if (pref.getBool('outbutton') == true) {
-      outbutton = pref.getBool('outbutton');
-      imgdirout = pref.getString('imgdirout');
-      nowhourout = pref.getString('nowhourout');
-      nowminuout = pref.getString('nowminuout');
-    }
-  }
+  //   stringalldatetimeNowOut = nowyear + nowmonth + nowday;
+  //   if (stringalldatetimeNowOut != stringalldatetimeSavedOut) {
+  //     pref.remove('outbutton');
+  //     pref.remove('imgdirout');
+  //     pref.remove('nowhourout');
+  //     pref.remove('nowminuout');
+  //   } else if (pref.getBool('outbutton') == true) {
+  //     outbutton = pref.getBool('outbutton');
+  //     imgdirout = pref.getString('imgdirout');
+  //     nowhourout = pref.getString('nowhourout');
+  //     nowminuout = pref.getString('nowminuout');
+  //   }
+  // }
 }
 
 class ThreeSizeDot extends StatefulWidget {
