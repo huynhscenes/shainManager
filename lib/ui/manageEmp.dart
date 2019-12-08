@@ -18,7 +18,6 @@ class manageEmp extends StatefulWidget {
 class manageEmpState extends State<manageEmp> {
   AppModel model;
   manageEmpState(this.model);
-  FetchDatafromSQLite fetchdataSQL;
   String _connectionStatus = 'Unknown';
   String idwifi = '';
   String imgdirenter = '';
@@ -35,6 +34,7 @@ class manageEmpState extends State<manageEmp> {
   String nowyear = '';
   String nowmonth = '';
   String nowday = '';
+  String ymdWork = '';
   String stringalldatetimeSavedEnter = '';
   String stringalldatetimeNowEnter = '';
   String stringalldatetimeSavedOut = '';
@@ -83,14 +83,15 @@ class manageEmpState extends State<manageEmp> {
                 side: BorderSide(color: Colors.red)),
             color: Colors.yellowAccent,
             child: Text('勤怠一覧'),
-            onPressed: () {
-            },
+            onPressed: () {},
           )
         ],
       ),
-      body: Center(child: _goingtoWork(context, model.itemListing)),
+      body: Center(child: _goingtoWork(context)),
     );
   }
+
+
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     switch (result) {
@@ -178,42 +179,47 @@ class manageEmpState extends State<manageEmp> {
     );
   }
 
-  Widget _goingtoWork(BuildContext context, List<FetchDatafromSQLite> sldata ) {
+  Widget _workingcheck(List<FetchDatafromSQLite> sldata) {
+  setState(() {
+    if(sldata !=null){
+      var todaydatetime = nowyear + nowmonth + nowday;
+      print('this is confirm compare datetime ' + sldata.length.toString());
+      for(var data in sldata){
+        if (data.ymdWork == todaydatetime && data.nowWorkenter != '') {
+          enterbutton = true;
+          outbutton = true;
+          imgdirout = data.imgdirout;
+          nowWorkenter = data.nowWorkenter;
+          nowWorkout = data.nowWorkout;
+        }
+      }
+    }
+
+  });
+
+  }
+  Widget _goingtoWork(BuildContext context) {
     datetimenow = new DateTime.now();
     nowyear = datetimenow.year.toString();
     nowmonth = datetimenow.month.toString();
     nowday = datetimenow.day.toString();
 
-    var setdata = FetchDatafromSQLite(
-        ymdWork: nowyear+nowmonth+nowday,
-        enterbutton: enterbutton,
-        outbutton: outbutton,
-        imgdirenter: imgdirenter,
-        imgdirout: imgdirout,
-        nowWorkenter: nowWorkenter,
-        nowWorkout: nowhourout+nowminuout,
-      );
-    model.fetchDataManager(nowyear+nowmonth+nowday);
-    var todaydatetime = nowyear+nowmonth+nowday;
+    ymdWork = nowyear + nowmonth + nowday;
 
-    print('this is confirm compare datetime ' + sldata[0].ymdWork);
-    if(sldata[0].ymdWork == todaydatetime){
-      enterbutton =true;
-      outbutton =true;
-      imgdirout = sldata[0].imgdirout;
-      nowWorkenter = sldata[0].nowWorkenter;
-      nowWorkout =sldata[0].nowWorkout; 
-    }
+
 
     // _getsharedPreEnterbutton();
-    // _getsharedPreOutbutton();
-    if (idwifi == '192.168.8.82') {
+    // _getsharedPreOutbutton(); 
+    // scenes wifi ip : 192.168.8.82
+    // home my wifi ip : 172.20.10.11
+    if (idwifi == '172.20.10.11') {
+      _workingcheck(model.itemListing.length != 0 ? model.itemListing : null);
       return Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           showimg(enterbutton == true
               ? (outbutton == true ? imgdirout : imgdirenter)
-              : imgdirout),
+              : ''),
           Container(
             padding: EdgeInsets.only(left: 40.0, right: 40.0, bottom: 10.0),
             child: Row(
@@ -236,6 +242,7 @@ class manageEmpState extends State<manageEmp> {
                           int score = await Future.delayed(
                               const Duration(milliseconds: 1000), () => 42);
                           setState(() {
+                            datetimenow = new DateTime.now();
                             enterbutton = !enterbutton;
                             imgdirenter = 'assets/img/enter.gif';
                             nowhourenter = (datetimenow.hour < 10
@@ -247,7 +254,6 @@ class manageEmpState extends State<manageEmp> {
                                 : datetimenow.minute.toString() + '分');
                             nowWorkenter = nowhourenter + nowminuenter;
                             // _setSharedPreEnterbutton();
-                            model.insertManager(setdata);
                           });
                         },
                 ),
@@ -272,6 +278,7 @@ class manageEmpState extends State<manageEmp> {
                           int score = await Future.delayed(
                               const Duration(milliseconds: 1000), () => 42);
                           setState(() {
+                            datetimenow = new DateTime.now();
                             outbutton = !outbutton;
                             imgdirout = 'assets/img/out.gif';
                             nowhourout = (datetimenow.hour < 10
@@ -283,6 +290,16 @@ class manageEmpState extends State<manageEmp> {
                                 : datetimenow.minute.toString() + '分');
                             nowWorkout = nowhourout + nowminuout;
                             // _setSharedPreOutbutton();
+                            var setdata = FetchDatafromSQLite(
+                              ymdWork: ymdWork,
+                              enterbutton: enterbutton,
+                              outbutton: outbutton,
+                              imgdirenter: imgdirenter,
+                              imgdirout: imgdirout,
+                              nowWorkenter: nowWorkenter,
+                              nowWorkout: nowWorkout,
+                            );
+                            model.insertManager(setdata);
                           });
                         },
                 ),
@@ -431,6 +448,7 @@ class _ThreeSizeDotState extends State<ThreeSizeDot>
   Animation<double> animation_2;
   Animation<double> animation_3;
 
+
   @override
   void initState() {
     super.initState();
@@ -450,6 +468,7 @@ class _ThreeSizeDotState extends State<ThreeSizeDot>
     animationController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:the_gorgeous_login/ui/manageEmp.dart';
 
 var data1 = [
@@ -130,31 +129,42 @@ class AppModel {
   createDB() async {
     try {
       var dbDir = await getDatabasesPath();
-      var dbPath = join(dbDir, 'managerDB22.db');
-      _db = await openDatabase(dbPath, version: 1, onCreate: createTable);
+      var dbPath = join(dbDir, 'managerDB122113232242.db');
+      _db = await openDatabase(dbPath, version: 1,
+          onOpen: (Database db){
+        this._db = db;
+        print("OPEN DBV");
+        this.createTable();
+      },
+          onCreate: (Database db,int version)async{
+            this._db = db;
+            print("DB Crated");
+          });
+      fetchDataManager(_db);
       return _db;
     } catch (e) {
       print('this is error database ' + e.toString());
     }
   }
 
-  createTable(Database database, int version) async {
-    this._db = database;
+  createTable() async {
     try {
       var qry =
-          "CREATE TABLE IF NOT EXISTS manageremps(id INTEGER NOT NULL AUTO_INCREMENT, ymdWork TEXT, enterbutton INTEGER, outbutton INTEGER, imgdirenter TEXT, imgdirout TEXT, nowWorkenter TEXT, nowWorkout TEXT)";
+          "CREATE TABLE manageremps(id INTEGER PRIMARY KEY, ymdWork TEXT, enterbutton INTEGER, outbutton INTEGER, imgdirenter TEXT, imgdirout TEXT, nowWorkenter TEXT, nowWorkout TEXT)";
       await this._db.execute(qry);
-      // var fido = FetchDatafromSQLite(
-      //   id: 1,
-      //   ymdWork: '',
-      //   enterbutton: 0,
-      //   outbutton: 0,
-      //   imgdirenter: '',
-      //   imgdirout: '',
-      //   nowWorkenter: '',
-      //   nowWorkout: '',
-      // );
-      // insertManager(fido);
+       var fido = FetchDatafromSQLite(
+         id: 1,
+         ymdWork: '',
+         enterbutton: 0,
+         outbutton: 0,
+         imgdirenter: '',
+         imgdirout: '',
+         nowWorkenter: '',
+         nowWorkout: '',
+       );
+       insertManager(fido);
+      var res = await _db.query("manageremps");
+      print('this is test 222222 ' + res.toString());
     } catch (e) {
       print(' this is create table ' + e.toString());
     }
@@ -164,19 +174,20 @@ class AppModel {
     try {
       await _db.insert('manageremps', fetchDatafromSQLite.toMap());
       var res = await _db.query("manageremps");
-      print('this is test update ' + res.toString());
+      print('this is test 111111 ' + res.toString());
+
     } catch (e) {
       print('this is insert ' + e.toString());
     }
   }
 
-  fetchDataManager(nowday) async {
+
+
+  fetchDataManager(_db) async {
     try {
       List<Map> listdata = await this._db.rawQuery("SELECT * FROM manageremps");
-      
         listdata.map((data) {
           FetchDatafromSQLite fetchData = new FetchDatafromSQLite();
-          if (nowday == data['ymdWork']) {
             fetchData.id = data['id'];
             fetchData.ymdWork = data['ymdWork'];
             fetchData.enterbutton = data['enterbutton'] == 1 ? true : false;
@@ -186,7 +197,6 @@ class AppModel {
             fetchData.nowWorkenter = data['nowWorkenter'];
             fetchData.nowWorkout = data['nowWorkout'];
             _data.add(fetchData);
-          }
         }).toList();
     } catch (e) {
       print('this is select ' + e.toString());
@@ -195,12 +205,14 @@ class AppModel {
 
   List<FetchDatafromSQLite> get itemListing => _data;
 
+
   updatedataManger(FetchDatafromSQLite fetchDatafromSQLite) async {
     try {
       await _db.update("manageremps", fetchDatafromSQLite.toMap());
     } catch (e) {
       print('this is update ' + e.toString());
     }
+
   }
 }
 
