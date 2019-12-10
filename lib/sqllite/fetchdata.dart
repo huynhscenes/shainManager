@@ -126,20 +126,23 @@ class timelineWork {
 class AppModel {
   Database _db;
   List<FetchDatafromSQLite> _data = [];
+  var datetimenow = new DateTime.now();
+  var nowyear = '';
+  var nowmonth = '';
+  var nowday = '';
+  var nowdatetime = '';
   createDB() async {
     try {
       var dbDir = await getDatabasesPath();
       var dbPath = join(dbDir, 'managerDB122113232242.db');
-      _db = await openDatabase(dbPath, version: 1,
-          onOpen: (Database db){
+      _db = await openDatabase(dbPath, version: 1, onOpen: (Database db) {
         this._db = db;
         print("OPEN DBV");
         this.createTable();
-      },
-          onCreate: (Database db,int version)async{
-            this._db = db;
-            print("DB Crated");
-          });
+      }, onCreate: (Database db, int version) async {
+        this._db = db;
+        print("DB Crated");
+      });
       fetchDataManager(_db);
       return _db;
     } catch (e) {
@@ -152,17 +155,17 @@ class AppModel {
       var qry =
           "CREATE TABLE manageremps(id INTEGER PRIMARY KEY, ymdWork TEXT, enterbutton INTEGER, outbutton INTEGER, imgdirenter TEXT, imgdirout TEXT, nowWorkenter TEXT, nowWorkout TEXT)";
       await this._db.execute(qry);
-       var fido = FetchDatafromSQLite(
-         id: 1,
-         ymdWork: '',
-         enterbutton: 0,
-         outbutton: 0,
-         imgdirenter: '',
-         imgdirout: '',
-         nowWorkenter: '',
-         nowWorkout: '',
-       );
-       insertManager(fido);
+      var fido = FetchDatafromSQLite(
+        id: 1,
+        ymdWork: '',
+        enterbutton: 0,
+        outbutton: 0,
+        imgdirenter: '',
+        imgdirout: '',
+        nowWorkenter: '',
+        nowWorkout: '',
+      );
+      insertManager(fido);
       var res = await _db.query("manageremps");
       print('this is test 222222 ' + res.toString());
     } catch (e) {
@@ -175,44 +178,51 @@ class AppModel {
       await _db.insert('manageremps', fetchDatafromSQLite.toMap());
       var res = await _db.query("manageremps");
       print('this is test 111111 ' + res.toString());
-
     } catch (e) {
       print('this is insert ' + e.toString());
     }
   }
 
-
-
   fetchDataManager(_db) async {
+    nowyear = datetimenow.year.toString();
+    nowmonth = datetimenow.month.toString();
+    nowday = datetimenow.day.toString();
+    nowdatetime = nowyear + nowmonth + nowday;
     try {
+      _data = [];
       List<Map> listdata = await this._db.rawQuery("SELECT * FROM manageremps");
-        listdata.map((data) {
+      listdata.map((data) {
           FetchDatafromSQLite fetchData = new FetchDatafromSQLite();
-            fetchData.id = data['id'];
-            fetchData.ymdWork = data['ymdWork'];
-            fetchData.enterbutton = data['enterbutton'] == 1 ? true : false;
-            fetchData.outbutton = data['outbutton'] == 1 ? true : false;
-            fetchData.imgdirenter = data['imgdirenter'];
-            fetchData.imgdirout = data['imgdirout'];
-            fetchData.nowWorkenter = data['nowWorkenter'];
-            fetchData.nowWorkout = data['nowWorkout'];
+          fetchData.id = data['id'];
+          fetchData.ymdWork = data['ymdWork'];
+          fetchData.enterbutton = data['enterbutton'] == 1 ? true : false;
+          fetchData.outbutton = data['outbutton'] == 1 ? true : false;
+          fetchData.imgdirenter = data['imgdirenter'];
+          fetchData.imgdirout = data['imgdirout'];
+          fetchData.nowWorkenter = data['nowWorkenter'];
+          fetchData.nowWorkout = data['nowWorkout'];
+          if(nowdatetime != data['ymdWork'] && data['ymdWork'] != ""){
             _data.add(fetchData);
-        }).toList();
+          }else if (_data.length < 3){
+            _data.add(fetchData);
+          }
+          print('this is length : ' + _data.length.toString());
+      }).toList();
     } catch (e) {
       print('this is select ' + e.toString());
     }
   }
 
-  List<FetchDatafromSQLite> get itemListing => _data;
-
-
+  List<FetchDatafromSQLite> get itemListing {
+      createDB();
+      return _data;
+  }
   updatedataManger(FetchDatafromSQLite fetchDatafromSQLite) async {
     try {
       await _db.update("manageremps", fetchDatafromSQLite.toMap());
     } catch (e) {
       print('this is update ' + e.toString());
     }
-
   }
 }
 

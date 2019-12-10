@@ -34,7 +34,8 @@ class Auth implements BaseAuth {
       'name': nickname,
       'email': email,
       'password' : password,
-      'photo': ''
+      'photo': '',
+      'timework': ''
     });
   //   UserUpdateInfo updateInfo = UserUpdateInfo();
   // updateInfo.displayName = nickname;

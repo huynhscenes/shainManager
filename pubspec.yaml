@@ -17,10 +17,10 @@ dependencies:
   cupertino_icons: ^0.1.2
   image_picker: ^0.6.1+4
   firebase_storage: ^3.0.6
-  meta: "^1.0.5"
   flutter_progress_button: '^1.0.0'
   sqflite: ^1.1.6+5
   path: ^1.6.4
+  path_provider: ^1.4.3
 
 dev_dependencies:
   flutter_test:

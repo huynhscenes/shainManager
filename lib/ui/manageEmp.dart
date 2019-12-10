@@ -2,26 +2,35 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:flutter_progress_button/flutter_progress_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:the_gorgeous_login/sqllite/fetchdata.dart';
+// import 'package:the_gorgeous_login/sqllite/fetchdata.dart';
+import 'package:the_gorgeous_login/sqllite/database_helper.dart';
+import 'package:the_gorgeous_login/sqllite/model/fetchdata.dart';
+import 'listtaikin.dart';
 
 import 'dart:math' as math show sin, pi;
 
 class manageEmp extends StatefulWidget {
   @override
-  State createState() => manageEmpState(new AppModel());
+  State createState() => manageEmpState();
 }
 
+class Data {
+  String ymdworkData;
+  String enterwork;
+  String outwork;
+  Data({this.ymdworkData,this.enterwork,this.outwork});
+    
+  }
+
 class manageEmpState extends State<manageEmp> {
-  AppModel model;
-  manageEmpState(this.model);
+
+var db = new DatabaseHelper();
   String _connectionStatus = 'Unknown';
   String idwifi = '';
-  String imgdirenter = '';
-  String imgdirout = '';
+  String imgdirenter = 'assets/img/enter.gif';
+  String imgdirout = 'assets/img/out.gif';
   var enterbutton = false;
   var outbutton = false;
   var datetimenow;
@@ -44,7 +53,7 @@ class manageEmpState extends State<manageEmp> {
 
   @override
   void initState() {
-    model.createDB();
+    // model.createDB();
     super.initState();
     initConnectivity();
     _connectivitySubscription =
@@ -83,7 +92,10 @@ class manageEmpState extends State<manageEmp> {
                 side: BorderSide(color: Colors.red)),
             color: Colors.yellowAccent,
             child: Text('勤怠一覧'),
-            onPressed: () {},
+            onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => listtaikin()));
+              
+            },
           )
         ],
       ),
@@ -179,30 +191,30 @@ class manageEmpState extends State<manageEmp> {
     );
   }
 
-  Widget _workingcheck(List<FetchDatafromSQLite> sldata) {
-  setState(() {
+  Widget _workingcheck(sldata) {
     if(sldata !=null){
       var todaydatetime = nowyear + nowmonth + nowday;
       print('this is confirm compare datetime ' + sldata.length.toString());
       for(var data in sldata){
-        if (data.ymdWork == todaydatetime && data.nowWorkenter != '') {
-          enterbutton = true;
+        if (data.ymdWork == todaydatetime && data.nowWorkout != '') {
+          setState(() {
+                      enterbutton = true;
           outbutton = true;
           imgdirout = data.imgdirout;
           nowWorkenter = data.nowWorkenter;
           nowWorkout = data.nowWorkout;
+            
+          });
         }
       }
     }
-
-  });
 
   }
   Widget _goingtoWork(BuildContext context) {
     datetimenow = new DateTime.now();
     nowyear = datetimenow.year.toString();
-    nowmonth = datetimenow.month.toString();
-    nowday = datetimenow.day.toString();
+    nowmonth = (datetimenow.month < 10 ? '0' + datetimenow.month.toString() : datetimenow.month.toString());
+    nowday = (datetimenow.day < 10 ? '0' + datetimenow.day.toString() : datetimenow.day.toString());
 
     ymdWork = nowyear + nowmonth + nowday;
 
@@ -212,8 +224,19 @@ class manageEmpState extends State<manageEmp> {
     // _getsharedPreOutbutton(); 
     // scenes wifi ip : 192.168.8.82
     // home my wifi ip : 172.20.10.11
-    if (idwifi == '172.20.10.11') {
-      _workingcheck(model.itemListing.length != 0 ? model.itemListing : null);
+    if (idwifi == '192.168.8.82') {
+      print('aaaa');
+      if(outbutton != true){
+        db.getManager().then((results){
+        print(results);
+          for(var result in results){
+            if(ymdWork == result.ymdWork){
+              _workingcheck(results);
+            }
+          }
+      });
+      }
+      // _workingcheck(model.itemListing.length != 0 ? model.itemListing : null);
       return Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
@@ -244,7 +267,7 @@ class manageEmpState extends State<manageEmp> {
                           setState(() {
                             datetimenow = new DateTime.now();
                             enterbutton = !enterbutton;
-                            imgdirenter = 'assets/img/enter.gif';
+                            
                             nowhourenter = (datetimenow.hour < 10
                                     ? '0' + datetimenow.hour.toString() + '時'
                                     : datetimenow.hour.toString()) +
@@ -280,7 +303,7 @@ class manageEmpState extends State<manageEmp> {
                           setState(() {
                             datetimenow = new DateTime.now();
                             outbutton = !outbutton;
-                            imgdirout = 'assets/img/out.gif';
+                            
                             nowhourout = (datetimenow.hour < 10
                                     ? '0' + datetimenow.hour.toString() + '時'
                                     : datetimenow.hour.toString()) +
@@ -290,16 +313,9 @@ class manageEmpState extends State<manageEmp> {
                                 : datetimenow.minute.toString() + '分');
                             nowWorkout = nowhourout + nowminuout;
                             // _setSharedPreOutbutton();
-                            var setdata = FetchDatafromSQLite(
-                              ymdWork: ymdWork,
-                              enterbutton: enterbutton,
-                              outbutton: outbutton,
-                              imgdirenter: imgdirenter,
-                              imgdirout: imgdirout,
-                              nowWorkenter: nowWorkenter,
-                              nowWorkout: nowWorkout,
-                            );
-                            model.insertManager(setdata);
+                            var db = new DatabaseHelper();
+                            var setdata = FetchDatafromSQLite(ymdWork,enterbutton,outbutton,imgdirenter,imgdirout, nowWorkenter, nowWorkout);
+                            db.insertManager(setdata);                        
                           });
                         },
                 ),
