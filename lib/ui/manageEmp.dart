@@ -84,7 +84,7 @@ var db = new DatabaseHelper();
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plugin example app'),
+        title: const Text('勤怠'),
         actions: <Widget>[
           RaisedButton(
             shape: RoundedRectangleBorder(
@@ -217,9 +217,6 @@ var db = new DatabaseHelper();
     nowday = (datetimenow.day < 10 ? '0' + datetimenow.day.toString() : datetimenow.day.toString());
 
     ymdWork = nowyear + nowmonth + nowday;
-
-
-
     // _getsharedPreEnterbutton();
     // _getsharedPreOutbutton(); 
     // scenes wifi ip : 192.168.8.82

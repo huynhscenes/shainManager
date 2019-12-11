@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_gorgeous_login/services/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:the_gorgeous_login/ui/chat.dart';
 import 'package:the_gorgeous_login/ui/receiptphoto.dart';
 
 import 'manageEmp.dart';
@@ -113,6 +114,15 @@ class HomePageState extends State<HomePage> {
                       ),
                       ListTile(
                           title: Text('Item 2'),
+                          onTap: (){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => Chat()),
+                              );
+                          },
+                      ),
+                      ListTile(
+                          title: Text('Item 3'),
                           onTap: (){
                               Navigator.push(
                                   context,
