@@ -7,32 +7,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Chat extends StatefulWidget {
   static const String id = "CHAT";
   final FirebaseUser user;
+  final String data;
 
-  const Chat({Key key, this.user}) : super(key: key);
+  const Chat({Key key, this.user,this.data}) : super(key: key);
   @override
   _ChatState createState() => _ChatState();
 }
 
 class _ChatState extends State<Chat> {
 
-Future<void> sendUserEmail() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return user.email;
-  }
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
 
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
+  bool boolme = false;
 
   Future<void> callback() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     if (messageController.text.length > 0) {
-      await _firestore.collection('messages').add({
+      await _firestore.collection('messages').document(widget.user.email.toString() + widget.data).collection('content').add({
         'text': messageController.text,
         'from': user.email,
-        'date': DateTime.now().toIso8601String().toString(),
+        'date': FieldValue.serverTimestamp(),
       });
       messageController.clear();
       scrollController.animateTo(
@@ -43,20 +40,12 @@ Future<void> sendUserEmail() async {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
+    print('test' + widget.user.email.toString());
     return Scaffold(
       appBar: AppBar(
-        leading: Hero(
-          tag: 'logo',
-          child: Container(
-            height: 40.0,
-            child: Image.asset("assets/images/logo.png"),
-          ),
-        ),
-        title: Text("Tensor Chat"),
+        title: Text("Chat"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
@@ -73,27 +62,22 @@ Future<void> sendUserEmail() async {
           children: <Widget>[
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore
-                    .collection('messages')
-                    .orderBy('date')
-                    .snapshots(),
-                builder: (context, snapshot)  {
+                stream: _firestore.collection('messages').document(widget.user.email.toString() + widget.data).collection('content').orderBy('date').snapshots(),
+                builder: (context, snapshot) {
                   if (!snapshot.hasData)
                     return Center(
                       child: CircularProgressIndicator(),
                     );
-List<DocumentSnapshot> docs = snapshot.data.documents;
-
+                  List<DocumentSnapshot> docs = snapshot.data.documents;
                   List<Widget> messages = docs
-                      .map((doc) => Message(
+                      .map((doc) =>
+                        Message(
                             from: doc.data['from'],
                             text: doc.data['text'],
-                            me: sendUserEmail() == doc.data['from'],
-                          ))
+                            me: doc.data['from'] == 'test123@gmail.com' ? true : false
+                          )
+                      )
                       .toList();
-                  
-
-                  
 
                   return ListView(
                     controller: scrollController,
@@ -111,14 +95,14 @@ List<DocumentSnapshot> docs = snapshot.data.documents;
                     child: TextField(
                       onSubmitted: (value) => callback(),
                       decoration: InputDecoration(
-                        hintText: "Enter a Message...",
+                        hintText: "メッセージを入力...",
                         border: const OutlineInputBorder(),
                       ),
                       controller: messageController,
                     ),
                   ),
                   SendButton(
-                    text: "Send",
+                    text: "送信",
                     callback: callback,
                   )
                 ],
