@@ -22,27 +22,30 @@ class _ChatState extends State<Chat> {
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
   bool boolme = false;
+  var messages = [];
+  
 
   Future<void> callback() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
     if (messageController.text.length > 0) {
-      await _firestore.collection('messages').document(widget.user.email.toString() + widget.data).collection('content').add({
+      await _firestore.collection('messages').add({
         'text': messageController.text,
-        'from': user.email,
+        'from': widget.user.email,
+        'to': widget.user.email.toString() + widget.data,
         'date': FieldValue.serverTimestamp(),
       });
       messageController.clear();
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
-      );
+//      scrollController.animateTo(
+//        scrollController.position.maxScrollExtent,
+//        curve: Curves.easeOut,
+//        duration: const Duration(milliseconds: 300),
+//      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print('test' + widget.user.email.toString());
+    String userto = widget.user.email.toString() + widget.data;
+    String touser = widget.data + widget.user.email.toString();
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat"),
@@ -62,28 +65,46 @@ class _ChatState extends State<Chat> {
           children: <Widget>[
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore.collection('messages').document(widget.user.email.toString() + widget.data).collection('content').orderBy('date').snapshots(),
+                stream: _firestore.collection('messages').orderBy('date').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData)
                     return Center(
                       child: CircularProgressIndicator(),
                     );
                   List<DocumentSnapshot> docs = snapshot.data.documents;
-                  List<Widget> messages = docs
-                      .map((doc) =>
-                        Message(
-                            from: doc.data['from'],
-                            text: doc.data['text'],
-                            me: doc.data['from'] == 'test123@gmail.com' ? true : false
-                          )
-                      )
-                      .toList();
+                  messages = [];
+//                  for(var item in docs){
+//    if (item.data['from'] == widget.user.email.toString() && item.data['to'] == widget.data) {
+         docs.map((doc) {
+           Mapdata mapdata = new Mapdata();
 
-                  return ListView(
-                    controller: scrollController,
-                    children: <Widget>[
-                      ...messages,
-                    ],
+               mapdata.to = doc.data['to'];
+               mapdata.from = doc.data['from'];
+               mapdata.text =  doc.data['text'];
+               mapdata.boolme =  doc.data['from'] ==
+                   widget.user.email.toString()
+                   ? true
+                   : false;
+               if(mapdata.to == userto){
+    messages.add(mapdata);
+    } else if(mapdata.to == touser){
+                 messages.add(mapdata);
+    }
+
+         }
+      )
+          .toList();
+//      break;
+//    }
+//                  }
+                  return ListView.builder(
+    itemCount: messages.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Message(
+                            messages[index].from, messages[index].text,
+                            messages[index].boolme);
+                      }
+
                   );
                 },
               ),
@@ -114,6 +135,39 @@ class _ChatState extends State<Chat> {
     );
   }
 }
+Message (from,text,me) {
+
+  return Container(
+  child: Column(
+  crossAxisAlignment:
+  me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+  children: <Widget>[
+  Text(
+  from,
+  ),
+  Material(
+  color: me ? Colors.teal : Colors.red,
+  borderRadius: BorderRadius.circular(10.0),
+  elevation: 6.0,
+  child: Container(
+  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+  child: Text(
+  text,
+  ),
+  ),
+  )
+  ],
+  ),
+  );
+}
+
+class Mapdata {
+   String to;
+   String from;
+   String text;
+   bool boolme;
+  Mapdata({this.to, this.from, this.text, this.boolme});
+}
 
 class SendButton extends StatelessWidget {
   final String text;
@@ -126,41 +180,6 @@ class SendButton extends StatelessWidget {
       color: Colors.orange,
       onPressed: callback,
       child: Text(text),
-    );
-  }
-}
-
-class Message extends StatelessWidget {
-  final String from;
-  final String text;
-
-  final bool me;
-
-  const Message({Key key, this.from, this.text, this.me}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment:
-            me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            from,
-          ),
-          Material(
-            color: me ? Colors.teal : Colors.red,
-            borderRadius: BorderRadius.circular(10.0),
-            elevation: 6.0,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-              child: Text(
-                text,
-              ),
-            ),
-          )
-        ],
-      ),
     );
   }
 }
