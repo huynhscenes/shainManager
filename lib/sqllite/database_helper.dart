@@ -37,7 +37,6 @@ class DatabaseHelper {
     var dbManager = await db;
     int res = await dbManager.insert("manageremps", fetchdata.toMap());
     var res1 = await _db.query("manageremps");
-    print('this is test 111111 ' + res1.toString());
     return res;
   }
 

@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:the_gorgeous_login/services/authentication.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:collection/collection.dart';
-import 'package:loading/loading.dart';
 import 'package:the_gorgeous_login/ui/chat.dart';
 
 class choicechat extends StatefulWidget {

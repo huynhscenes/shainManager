@@ -18,46 +18,34 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final databaseReference = FirebaseDatabase.instance.reference();
-  FirebaseUser user;
   var userdatabase;
-  String nicknameDB;
 
-//  @override
-//  void initState() {
-//    super.initState();
-//    initUser();
-//  }
-//
-//  initUser() async {
-//    user = await _auth.currentUser();
-//    userdatabase = await databaseReference.child('users').once().then((snapshot){
-//              var values = snapshot.value;
-//          print('test 1' + snapshot.value.toString());
-//          values.forEach((key,value){
-//            if(user.uid == value['userUID']){
-//              print(value['name']);
-//                nicknameDB = value['name'];
-//            }
-//    });
-//
-//    });
-//    print('test 2' + nicknameDB);
-//    print('test 3 ' + user.uid.toString());
-//    setState(() {});
-//  }
+  String nickname = "";
+  @override
+  void initState() {
+    // TODO: implement initState
+      fetchnickname();
+      super.initState();
+  }
+  fetchnickname() async{
+      FirebaseUser usercurrent = await FirebaseAuth.instance.currentUser();
+      final databaseReference = FirebaseDatabase.instance.reference();
+      databaseReference.child('users').child(usercurrent.uid).once().then((snapshot) {
+          setState(() {
+              nickname = snapshot.value['name'];
+          });
 
-  String nickname;
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'TheGorgeousLogin',
+      title: '社内管理',
       home: new Scaffold(
         key: _key,
         appBar: AppBar(
-            title: Text(' HOME '),
+            title: Text(' ホーム '),
             leading: IconButton(
                     icon: Icon(Icons.menu),
                     onPressed: (){
@@ -66,7 +54,16 @@ class HomePageState extends State<HomePage> {
             }),
         ),
         body: Center(
-          child: Text('hello world !!!'),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                  Text('テキスト'),
+                  Text('テキスト'),
+                  Text('テキスト'),
+                  Text('テキスト'),
+                  Text('テキスト'),
+              ],
+          ),
         ),
         drawer: openmenu(context),
 
@@ -75,61 +72,106 @@ class HomePageState extends State<HomePage> {
   }
    openmenu(context) {
       return  Drawer(
+
               child: ListView(
 
                   padding: EdgeInsets.zero,
 
                   children: <Widget>[
-                      DrawerHeader(
-                          child: Column(
+                      Container(
+                          color: Colors.blueAccent,
+                          child: DrawerHeader(
+                              child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                  Container(
-                                      height: 120.0,
-                                      width: 120.0,
-                                      margin: EdgeInsets.only(left: 50.0,right: 50.0),
-                                      decoration:  BoxDecoration(
+                                  children: <Widget>[
+                                      Container(
+                                          height: 120.0,
+                                          width: 120.0,
+                                          margin: EdgeInsets.only(left: 50.0,right: 50.0),
+                                          decoration:  BoxDecoration(
                                               shape: BoxShape.circle,
                                               image:  DecorationImage(image: new ExactAssetImage('assets/img/avatar.jpg'),
-                                                      fit: BoxFit.cover)
+                                                      fit: BoxFit.cover),
+                                          ),
                                       ),
-                                  ),
-                                  Container(
-//                                      height: .0,
-//                                      child:Text(nicknameDB),
-                                            
-                                  ),
-                              ],
+                                      Container(
+                                          color: Colors.white,
+                                          child: Text('$nickname',
+                                                  style: new TextStyle(fontSize: 12.0, color: Colors.green)),
+                                      ),
+                                  ],
 
+                              ),
                           ),
                       ),
-                      ListTile(
-                          title: Text('Item 1'),
-                          onTap: (){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => manageEmp()),
-                              );
-                          },
-                      ),
-                      ListTile(
-                          title: Text('Item 2'),
-                          onTap: (){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => choicechat()),
-                              );
-                          },
-                      ),
-                      ListTile(
-                          title: Text('Item 3'),
-                          onTap: (){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => receiptphoto()),
-                              );
-                          },
+                      Container(
+                          color: Colors.yellowAccent,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                  SizedBox(height: 30.0),
+                                  Container(
+                                      child: ListTile(
+                                          leading: Icon(Icons.home,size: 50.0,),
+                                          title: Text('ホーム'),
+                                          onTap: (){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => HomePage()),
+                                              );
+                                          },
+                                      ),
+                                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey,width: 1.0))),
+                                  ),
+                                  SizedBox(height: 30.0),
+                                  Container(
+                                      child: ListTile(
+                                          leading: Icon(Icons.calendar_today,size: 50.0,),
+                                          title: Text('出勤簿'),
+                                          onTap: (){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => manageEmp()),
+                                              );
+                                          },
+                                      ),
+                                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey,width: 1.0))),
+                                  ),
+                                  SizedBox(height: 30.0,),
+                                  Container(
+
+                                      child: ListTile(
+                                          leading: Icon(Icons.chat_bubble,size: 50.0,),
+                                          title: Text('社内チャット'),
+                                          onTap: (){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => choicechat()),
+                                              );
+                                          },
+                                      ),
+                                      decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey,width: 1.0))),
+                                  ),
+                                  SizedBox(height: 30.0,),
+                                  Container(
+                                      child:
+                                      ListTile(
+                                          leading: Icon(Icons.scanner,size: 50.0,),
+                                          title: Text('領収証スキャン'),
+                                          onTap: (){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => receiptphoto()),
+                                              );
+                                          },
+                                      ),
+
+                                  ),
+                                  SizedBox(height: 30.0),
+                              ],
+                          ),
                       )
+
                   ],
               ),
 

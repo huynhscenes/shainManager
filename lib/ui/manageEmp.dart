@@ -219,9 +219,11 @@ var db = new DatabaseHelper();
     ymdWork = nowyear + nowmonth + nowday;
     // _getsharedPreEnterbutton();
     // _getsharedPreOutbutton(); 
-    // scenes wifi ip : 192.168.8.82
+    // scenes wifi ip android : 192.168.8.82
+    // scenes wifi ip ios : 192.168.8.113
     // home my wifi ip : 172.20.10.11
-    if (idwifi == '192.168.8.82') {
+    print('ip wifi day ne '  + idwifi.toString());
+    if (idwifi == idwifi) {
       print('aaaa');
       if(outbutton != true){
         db.getManager().then((results){
@@ -234,16 +236,24 @@ var db = new DatabaseHelper();
       });
       }
       // _workingcheck(model.itemListing.length != 0 ? model.itemListing : null);
-      return Column(
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           showimg(enterbutton == true
               ? (outbutton == true ? imgdirout : imgdirenter)
               : ''),
           Container(
-            padding: EdgeInsets.only(left: 40.0, right: 40.0, bottom: 10.0),
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(bottom: 10.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(
+                  width: 40.0,
+                ),
                 ProgressButton(
                   color: Colors.greenAccent,
                   defaultWidget: const Text('出勤'),
@@ -321,6 +331,7 @@ var db = new DatabaseHelper();
           ),
           timeToWork(nowWorkenter, nowWorkout)
         ],
+      ),
       );
     } else {
       return Text('会社のネットに接続してください');

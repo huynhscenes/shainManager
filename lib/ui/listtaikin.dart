@@ -89,6 +89,8 @@ class _ListtaikinState extends State<listtaikin> {
     nowmonth = datetimenow.month.toString();
 
     return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
       child: Column(
         children: <Widget>[
           Container(
@@ -100,7 +102,7 @@ class _ListtaikinState extends State<listtaikin> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                width: 60.0,
+                width: 15.0,
               ),
               Container(
                 height: 50.0,
