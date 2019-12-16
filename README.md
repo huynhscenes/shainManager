@@ -10,4 +10,5 @@
   ３。社内のチャット（まだ開発しています）<br/>
   ４。領収証にスキャン：領収証に写真を撮って、サーバーを送って、PYTHONに読み込んでテキストを提出して、このテキストは処理する結果はseleniumでhttps://ic.next-cloud.jp/　に書き込む（まだ開発しています）<br/>
 # shainManager
+# startdaydevelop:2019/12/03
   </span>
