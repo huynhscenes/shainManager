@@ -51,7 +51,7 @@ class _ListtaikinState extends State<listtaikin> {
                   print(results);
                   for(var result in results){
                     sendtimeworkDatabase(result);
-
+                  
                   }
                 });
               },
@@ -67,7 +67,7 @@ class _ListtaikinState extends State<listtaikin> {
     final databaseReference = FirebaseDatabase.instance.reference();
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     if (user.uid != null) {
-      databaseReference.reference().child('users').child(user.uid).child('timework').child(data.ymdWork).set({
+      databaseReference.reference().child('users').child(user.uid).child('timework').child(data.ymdWork).update({
               'id' : data.id,
               'ymdWork': data.ymdWork,
               'enterbutton': data.enterbutton,
@@ -77,6 +77,8 @@ class _ListtaikinState extends State<listtaikin> {
               'nowWorkenter': data.nowWorkenter,
               'nowWorkout': data.nowWorkout
       });
+      print("時刻を更新しました");
+      
     }
   }
 

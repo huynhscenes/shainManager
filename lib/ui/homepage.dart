@@ -126,7 +126,7 @@ class HomePageState extends State<HomePage> {
                           onTap: (){
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => receiptPhoto()),
+                                  MaterialPageRoute(builder: (context) => receiptphoto()),
                               );
                           },
                       )

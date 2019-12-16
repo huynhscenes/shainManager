@@ -9,30 +9,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 
-class receiptPhoto extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-        return MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(
-                primarySwatch: Colors.blue,
-            ),
-            home: MyHomePage(title: 'Image Picker Demo'),
-        );
-    }
-}
 
-class MyHomePage extends StatefulWidget {
-    MyHomePage({Key key, this.title,this.auth}) : super(key: key);
+class receiptphoto extends StatefulWidget {
+    receiptphoto({Key key ,this.auth}) : super(key: key);
     final BaseAuth auth;
 
-    final String title;
 
     @override
     _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<receiptphoto> {
     //final ImagePicker _imagePicker = ImagePickerChannel();
 
     File _imageFile;
@@ -90,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
         return new Scaffold(
             appBar: AppBar(
-                title: Text(widget.title),
+                title: Text('Receiption'),
             ),
             body: Builder(
                 builder: (context)=>Container(
