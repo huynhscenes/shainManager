@@ -17,71 +17,133 @@ class choicechat extends StatefulWidget {
 }
 
 class _choicechatState extends State<choicechat> {
+  TextEditingController editingController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
   // var listusers = [];
   var userschat = [];
+  var useravatar = [];
+  List<String> usernickname = [];
+  var listdata = [];
 
   @override
   void initState() {
     final databaseReference = FirebaseDatabase.instance.reference();
     databaseReference.child('users').once().then((snapshot) {
       if (userschat.length == 0) {
-        Map<dynamic, dynamic> values = snapshot.value;
+        List<Map> values  = snapshot.value;
         setState(() {
-          values.forEach((key, values) {
-            userschat.add(values['email']);
+          values.map((data){
+            UserList userList = new UserList();
+            userList.useremail = data['email'];
+            userList.useravatar = data['avatar'];
+            userList.username = data['name'];
+            listdata.add(userList);
+
           });
+          // values.forEach((key, values) {
+          //   userschat.add(values['email']);
+          //   useravatar.add(values['avatar']);
+          //   usernickname.add(values['name']);
+          //   listdata.add(snapshot.value[key]);
+          // });
         });
       }
     });
     super.initState();
   }
 
-  Future<void> choiceperson(data) async {
+  Future<void> choiceperson(data, datanickname,dataavatar) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    await _firestore.collection('messages').document(data+user.toString()).collection('content');
-    return Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(user:user, data:data)));
+    return Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Chat(user: user, data: data,datanickname:datanickname,dataavatar:dataavatar)));
   }
 
-  //  listusers()  {
-  //   final databaseReference = FirebaseDatabase.instance.reference();
-
-  //    databaseReference.child('users').once().then((snapshot) {
-  //     if (userschat.length == 0) {
-  //       Map<dynamic, dynamic> values = snapshot.value;
-  //       values.forEach((key, values) {
-  //         userschat.add(values['email']);
-  //       });
-  //     }
-  //   });
-
-  // }
-
   listviewuser() {
-    return ListView.builder(
-      itemCount: userschat.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Row(
-          children: <Widget>[
-            RaisedButton(
-              child: Text(userschat[index]),
-              onPressed: () {
-                choiceperson(userschat[index]);
-              },
-            ),
-          ],
-        );
-      },
+    return Container(
+      padding: EdgeInsets.all(40.0),
+      child: ListView.builder(
+        itemCount: usernickname.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Column(
+            children: <Widget>[
+              SizedBox(
+                height: 30.0,
+              ),
+              ListTile(
+                title: Text(usernickname[index]),
+                leading: CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: NetworkImage(useravatar[index]),
+                ),
+                onTap: () {
+                  choiceperson(userschat[index], usernickname[index],useravatar[index]);
+                },
+              ),
+            ],
+          );
+        },
+      ),
     );
+  }
+
+void filterSearchResults(String query) {
+    List<String> dummySearchList = List<String>();
+    dummySearchList.addAll(usernickname);
+    if(query.isNotEmpty) {
+      List<String> dummyListData = List<String>();
+      dummySearchList.forEach((item) {
+        if(item.contains(query)) {
+          dummyListData.add(item);
+        }
+      });
+      setState(() {
+        usernickname.clear();
+        usernickname.addAll(dummyListData);
+      });
+      return;
+    } else {
+      setState(() {
+        usernickname.clear();
+        usernickname.addAll(listdata);
+      });
+    }
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Choice User'),
+          title: TextFormField(
+                onChanged: (value) {
+                  filterSearchResults(value);
+                },
+                controller: editingController,
+                decoration: InputDecoration(
+                  fillColor: Colors.white,
+                    labelText: "Search",
+                    hintText: "Search",
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(50.0))),
+                    focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              borderSide: BorderSide(color: Colors.blue)),
+          filled: true,
+          contentPadding:
+              EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+                        ),
+            )
         ),
-        body: listviewuser());
+        
+        body:  listviewuser());
   }
+}
+
+class UserList {
+  String username;
+  String useremail;
+  String useravatar;
+  UserList({this.username,this.useremail,this.useravatar});
 }

@@ -49,9 +49,8 @@ class _ListtaikinState extends State<listtaikin> {
               onPressed: () {
                 db.getManager().then((results) {
                   print(results);
-                  for(var result in results){
+                  for (var result in results) {
                     sendtimeworkDatabase(result);
-                  
                   }
                 });
               },
@@ -59,6 +58,10 @@ class _ListtaikinState extends State<listtaikin> {
           ],
         ),
         body: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height >= 775.0
+              ? MediaQuery.of(context).size.height
+              : 775.0,
           child: _ListtimedateState(),
         ));
   }
@@ -67,18 +70,23 @@ class _ListtaikinState extends State<listtaikin> {
     final databaseReference = FirebaseDatabase.instance.reference();
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     if (user.uid != null) {
-      databaseReference.reference().child('users').child(user.uid).child('timework').child(data.ymdWork).update({
-              'id' : data.id,
-              'ymdWork': data.ymdWork,
-              'enterbutton': data.enterbutton,
-              'outbutton' : data.outbutton,
-              'imgdirenter': data.imgdirenter,
-              'imgdirout' : data.imgdirout,
-              'nowWorkenter': data.nowWorkenter,
-              'nowWorkout': data.nowWorkout
+      databaseReference
+          .reference()
+          .child('users')
+          .child(user.uid)
+          .child('timework')
+          .child(data.ymdWork)
+          .update({
+        'id': data.id,
+        'ymdWork': data.ymdWork,
+        'enterbutton': data.enterbutton,
+        'outbutton': data.outbutton,
+        'imgdirenter': data.imgdirenter,
+        'imgdirout': data.imgdirout,
+        'nowWorkenter': data.nowWorkenter,
+        'nowWorkout': data.nowWorkout
       });
       print("時刻を更新しました");
-      
     }
   }
 
@@ -98,39 +106,33 @@ class _ListtaikinState extends State<listtaikin> {
             child: Text('$nowyear年$nowmonth月',
                 style: new TextStyle(fontSize: 20.0, color: Colors.green)),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                width: 15.0,
-              ),
-              Container(
-                height: 50.0,
-                padding: EdgeInsets.only(top: 15.0),
-                decoration: BoxDecoration(border: Border.all()),
-                width: MediaQuery.of(context).size.width - 230.0,
-                child: Text(
-                  '出勤の時間',
-                  textAlign: TextAlign.center,
+          Container(
+            width: MediaQuery.of(context).size.width - 30.0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  height: 50.0,
+                  padding: EdgeInsets.only(top: 15.0),
+                  decoration: BoxDecoration(border: Border.all()),
+                  width: MediaQuery.of(context).size.width - 270.0,
+                  child: Text(
+                    '出勤の時間',
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 10.0,
-              ),
-              Container(
-                height: 50.0,
-                padding: EdgeInsets.only(top: 15.0),
-                decoration: BoxDecoration(border: Border.all()),
-                width: MediaQuery.of(context).size.width - 230.0,
-                child: Text(
-                  '退勤の時間',
-                  textAlign: TextAlign.center,
+                Container(
+                  height: 50.0,
+                  padding: EdgeInsets.only(top: 15.0),
+                  decoration: BoxDecoration(border: Border.all()),
+                  width: MediaQuery.of(context).size.width - 270.0,
+                  child: Text(
+                    '退勤の時間',
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10.0,
+              ],
+            ),
           ),
           Container(
             height: 100.0,
@@ -146,21 +148,16 @@ class _ListtaikinState extends State<listtaikin> {
                         var enterwork = datas[index].nowWorkenter;
                         var outwork = datas[index].nowWorkout;
                         return Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            SizedBox(
-                              width: 30.0,
-                              height: 20.0,
-                            ),
                             Text('$datework日'),
-                            SizedBox(
-                              width: 30.0,
-                            ),
+                            // SizedBox(
+                            //   width: 30.0,
+                            // ),
                             Text('$enterwork'),
-                            SizedBox(
-                              width: 80.0,
-                            ),
-                            Text('$outwork')
+                            SizedBox(width: 10.0,),
+                            Text('$outwork'),
+                            SizedBox(width: 30.0,)
                           ],
                         );
                       });

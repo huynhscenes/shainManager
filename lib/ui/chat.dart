@@ -8,14 +8,15 @@ class Chat extends StatefulWidget {
   static const String id = "CHAT";
   final FirebaseUser user;
   final String data;
+  final String datanickname;
+  final String dataavatar;
 
-  const Chat({Key key, this.user,this.data}) : super(key: key);
+  const Chat({Key key, this.user, this.data,this.datanickname,this.dataavatar}) : super(key: key);
   @override
   _ChatState createState() => _ChatState();
 }
 
 class _ChatState extends State<Chat> {
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
 
@@ -23,7 +24,6 @@ class _ChatState extends State<Chat> {
   ScrollController scrollController = ScrollController();
   bool boolme = false;
   var messages = [];
-  
 
   Future<void> callback() async {
     if (messageController.text.length > 0) {
@@ -48,7 +48,14 @@ class _ChatState extends State<Chat> {
     String touser = widget.data + widget.user.email.toString();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: ListTile(
+                title: Text(widget.datanickname),
+                leading: CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: NetworkImage(widget.dataavatar),
+                ),
+                subtitle: Text("Messenger"),
+              ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.close),
@@ -65,7 +72,10 @@ class _ChatState extends State<Chat> {
           children: <Widget>[
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore.collection('messages').orderBy('date').snapshots(),
+                stream: _firestore
+                    .collection('messages')
+                    .orderBy('date')
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData)
                     return Center(
@@ -73,39 +83,28 @@ class _ChatState extends State<Chat> {
                     );
                   List<DocumentSnapshot> docs = snapshot.data.documents;
                   messages = [];
-//                  for(var item in docs){
-//    if (item.data['from'] == widget.user.email.toString() && item.data['to'] == widget.data) {
-         docs.map((doc) {
-           Mapdata mapdata = new Mapdata();
+                  docs.map((doc) {
+                    Mapdata mapdata = new Mapdata();
 
-               mapdata.to = doc.data['to'];
-               mapdata.from = doc.data['from'];
-               mapdata.text =  doc.data['text'];
-               mapdata.boolme =  doc.data['from'] ==
-                   widget.user.email.toString()
-                   ? true
-                   : false;
-               if(mapdata.to == userto){
-    messages.add(mapdata);
-    } else if(mapdata.to == touser){
-                 messages.add(mapdata);
-    }
-
-         }
-      )
-          .toList();
-//      break;
-//    }
-//                  }
+                    mapdata.to = doc.data['to'];
+                    mapdata.from = doc.data['from'];
+                    mapdata.text = doc.data['text'];
+                    mapdata.boolme =
+                        doc.data['from'] == widget.user.email.toString()
+                            ? true
+                            : false;
+                    if (mapdata.to == userto) {
+                      messages.add(mapdata);
+                    } else if (mapdata.to == touser) {
+                      messages.add(mapdata);
+                    }
+                  }).toList();
                   return ListView.builder(
-    itemCount: messages.length,
+                      itemCount: messages.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return Message(
-                            messages[index].from, messages[index].text,
-                            messages[index].boolme);
-                      }
-
-                  );
+                        return Message(messages[index].from,
+                            messages[index].text, messages[index].boolme);
+                      });
                 },
               ),
             ),
@@ -134,38 +133,61 @@ class _ChatState extends State<Chat> {
       ),
     );
   }
-}
-Message (from,text,me) {
-
+  Message(from, text, me) {
   return Container(
-  child: Column(
-  crossAxisAlignment:
-  me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-  children: <Widget>[
-  Text(
-  from,
-  ),
-  Material(
-  color: me ? Colors.teal : Colors.red,
-  borderRadius: BorderRadius.circular(10.0),
-  elevation: 6.0,
-  child: Container(
-  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-  child: Text(
-  text,
-  ),
-  ),
-  )
-  ],
-  ),
+    child: Column(
+      crossAxisAlignment:
+          me ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(5.0),
+          child: me ? 
+        Material(
+          color: Colors.teal,
+          borderRadius: BorderRadius.circular(10.0),
+          elevation: 6.0,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+            child: Text(
+              text,
+            ),
+          ),
+        )
+        :
+        Row(
+          children: <Widget>[
+            CircleAvatar(
+              radius: 20.0,
+              backgroundImage: NetworkImage(widget.dataavatar),
+            ),
+            SizedBox(width: 10.0,),
+            Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          elevation: 6.0,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 15.0),
+            child: Text(
+              text,
+            ),
+          ),
+        )
+          ],
+        ),
+        ),
+      ],
+    ),
   );
 }
+}
+
+
 
 class Mapdata {
-   String to;
-   String from;
-   String text;
-   bool boolme;
+  String to;
+  String from;
+  String text;
+  bool boolme;
   Mapdata({this.to, this.from, this.text, this.boolme});
 }
 

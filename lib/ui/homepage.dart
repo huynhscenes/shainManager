@@ -21,6 +21,7 @@ class HomePageState extends State<HomePage> {
   var userdatabase;
 
   String nickname = "";
+  var useravatar;
   @override
   void initState() {
     // TODO: implement initState
@@ -33,6 +34,7 @@ class HomePageState extends State<HomePage> {
       databaseReference.child('users').child(usercurrent.uid).once().then((snapshot) {
           setState(() {
               nickname = snapshot.value['name'];
+              useravatar = snapshot.value['avatar'];
           });
 
       });
@@ -84,15 +86,9 @@ class HomePageState extends State<HomePage> {
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
-                                      Container(
-                                          height: 120.0,
-                                          width: 120.0,
-                                          margin: EdgeInsets.only(left: 50.0,right: 50.0),
-                                          decoration:  BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image:  DecorationImage(image: new ExactAssetImage('assets/img/avatar.jpg'),
-                                                      fit: BoxFit.cover),
-                                          ),
+                                      CircleAvatar(
+                                        radius: 50.0,
+                                        backgroundImage: NetworkImage("$useravatar"),
                                       ),
                                       Container(
                                           color: Colors.white,

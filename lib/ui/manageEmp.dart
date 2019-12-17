@@ -99,7 +99,12 @@ var db = new DatabaseHelper();
           )
         ],
       ),
-      body: Center(child: _goingtoWork(context)),
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height >= 775.0
+                    ? MediaQuery.of(context).size.height
+                    : 775.0,
+        child: _goingtoWork(context)),
     );
   }
 
@@ -237,23 +242,19 @@ var db = new DatabaseHelper();
       }
       // _workingcheck(model.itemListing.length != 0 ? model.itemListing : null);
       return Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
         child: Column(
-        mainAxisSize: MainAxisSize.max,
+        // mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           showimg(enterbutton == true
               ? (outbutton == true ? imgdirout : imgdirenter)
               : ''),
           Container(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width-120.0,
             padding: EdgeInsets.only(bottom: 10.0),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                SizedBox(
-                  width: 40.0,
-                ),
                 ProgressButton(
                   color: Colors.greenAccent,
                   defaultWidget: const Text('出勤'),
@@ -287,9 +288,7 @@ var db = new DatabaseHelper();
                           });
                         },
                 ),
-                SizedBox(
-                  width: 50.0,
-                ),
+                // SizedBox(width: 20.0,),
                 ProgressButton(
                   color: Colors.greenAccent,
                   defaultWidget: const Text('退勤'),
