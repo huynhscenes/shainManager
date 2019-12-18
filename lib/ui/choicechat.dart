@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,49 +22,57 @@ class _choicechatState extends State<choicechat> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _firestore = Firestore.instance;
   // var listusers = [];
-  var userschat = [];
-  var useravatar = [];
-  List<String> usernickname = [];
+  var listdataback = [];
   var listdata = [];
+  var maxdatechat = [];
+  String newmess;
+  FirebaseUser user;
 
   @override
   void initState() {
     final databaseReference = FirebaseDatabase.instance.reference();
     databaseReference.child('users').once().then((snapshot) {
-      if (userschat.length == 0) {
-        List<Map> values  = snapshot.value;
+      if (listdata.length == 0) {
+        Map<dynamic, dynamic> datas = snapshot.value;
         setState(() {
-          values.map((data){
+          for (var data in datas.values) {
             UserList userList = new UserList();
             userList.useremail = data['email'];
             userList.useravatar = data['avatar'];
             userList.username = data['name'];
             listdata.add(userList);
-
-          });
-          // values.forEach((key, values) {
-          //   userschat.add(values['email']);
-          //   useravatar.add(values['avatar']);
-          //   usernickname.add(values['name']);
-          //   listdata.add(snapshot.value[key]);
-          // });
+            listdataback.add(userList);
+            fetchnewmess();
+          }
         });
       }
     });
     super.initState();
   }
 
-  Future<void> choiceperson(data, datanickname,dataavatar) async {
+  fetchnewmess() async {
+    user = await FirebaseAuth.instance.currentUser();
+    return user;
+  }
+
+  Future<void> choiceperson(data, datanickname, dataavatar) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return Navigator.push(context,
-        MaterialPageRoute(builder: (context) => Chat(user: user, data: data,datanickname:datanickname,dataavatar:dataavatar)));
+    return Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Chat(
+                user: user,
+                data: data,
+                datanickname: datanickname,
+                dataavatar: dataavatar)));
   }
 
   listviewuser() {
+    fetchnewmess();
     return Container(
       padding: EdgeInsets.all(40.0),
       child: ListView.builder(
-        itemCount: usernickname.length,
+        itemCount: listdata.length,
         itemBuilder: (BuildContext context, int index) {
           return Column(
             children: <Widget>[
@@ -71,14 +80,46 @@ class _choicechatState extends State<choicechat> {
                 height: 30.0,
               ),
               ListTile(
-                title: Text(usernickname[index]),
+                title: Text(listdata[index].username),
                 leading: CircleAvatar(
                   radius: 30.0,
-                  backgroundImage: NetworkImage(useravatar[index]),
+                  backgroundImage: NetworkImage(listdata[index].useravatar),
                 ),
                 onTap: () {
-                  choiceperson(userschat[index], usernickname[index],useravatar[index]);
+                  choiceperson(listdata[index].useremail,
+                      listdata[index].username, listdata[index].useravatar);
                 },
+                subtitle: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('messages')
+                      .orderBy('date')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    UserList userList = new UserList();
+                    String userto =
+                        user.email.toString() + listdata[index].useremail;
+                    String touser =
+                        listdata[index].useremail + user.email.toString();
+                    if (snapshot.hasData) {
+                      var values = snapshot.data.documents;
+                      for (var item in values) {
+                        if (item.data['to'] == userto) {
+                          newmess = item.data['text'];
+                          userList.usermess = newmess;
+                          print(newmess);
+                        } else if (item.data['to'] == touser) {
+                          newmess = item.data['text'];
+                          print(newmess);
+                          userList.usermess = newmess;
+                        } else {
+                          newmess = '';
+                        }
+                      }
+
+                      return Text(userList.usermess != null ? 'メッセージ：' + userList.usermess:'');
+                    }
+                  },
+                ),
               ),
             ],
           );
@@ -87,57 +128,54 @@ class _choicechatState extends State<choicechat> {
     );
   }
 
-void filterSearchResults(String query) {
-    List<String> dummySearchList = List<String>();
-    dummySearchList.addAll(usernickname);
-    if(query.isNotEmpty) {
-      List<String> dummyListData = List<String>();
+  void fillout(String query) {
+    var dummySearchList = [];
+    dummySearchList.addAll(listdata);
+    if (query != "") {
+      var dummyListData = [];
       dummySearchList.forEach((item) {
-        if(item.contains(query)) {
+        if (item.username.contains(query)) {
           dummyListData.add(item);
         }
       });
       setState(() {
-        usernickname.clear();
-        usernickname.addAll(dummyListData);
+        listdata.clear();
+        listdata.addAll(dummyListData);
       });
       return;
     } else {
       setState(() {
-        usernickname.clear();
-        usernickname.addAll(listdata);
+        listdata.clear();
+        listdata.addAll(listdataback);
       });
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: TextFormField(
-                onChanged: (value) {
-                  filterSearchResults(value);
-                },
-                controller: editingController,
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                    labelText: "Search",
-                    hintText: "Search",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(50.0))),
-                    focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              borderSide: BorderSide(color: Colors.blue)),
-          filled: true,
-          contentPadding:
-              EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
-                        ),
-            )
-        ),
-        
-        body:  listviewuser());
+            title: TextFormField(
+          onChanged: (value) {
+            fillout(value);
+          },
+          controller: editingController,
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            labelText: "Search",
+            hintText: "Search",
+            prefixIcon: Icon(Icons.search),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(50.0))),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                borderSide: BorderSide(color: Colors.blue)),
+            filled: true,
+            contentPadding:
+                EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+          ),
+        )),
+        body: listviewuser());
   }
 }
 
@@ -145,5 +183,6 @@ class UserList {
   String username;
   String useremail;
   String useravatar;
-  UserList({this.username,this.useremail,this.useravatar});
+  String usermess;
+  UserList({this.username, this.useremail, this.useravatar, this.usermess});
 }
