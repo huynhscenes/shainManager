@@ -1,2 +1,1 @@
-*.rb linguist-language=Flutter
-*.rb linguist-language=Dart
+ *.java linguist-language=Dart
