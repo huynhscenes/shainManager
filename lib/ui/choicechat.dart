@@ -8,6 +8,7 @@ import 'package:the_gorgeous_login/services/authentication.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:collection/collection.dart';
 import 'package:the_gorgeous_login/ui/chat.dart';
+import 'package:loading/loading.dart';
 
 class choicechat extends StatefulWidget {
   final BaseAuth auth;
@@ -95,12 +96,12 @@ class _choicechatState extends State<choicechat> {
                       .orderBy('date')
                       .snapshots(),
                   builder: (context, snapshot) {
-                    UserList userList = new UserList();
+                    if (snapshot.hasData) {
+                                          UserList userList = new UserList();
                     String userto =
                         user.email.toString() + listdata[index].useremail;
                     String touser =
                         listdata[index].useremail + user.email.toString();
-                    if (snapshot.hasData) {
                       var values = snapshot.data.documents;
                       for (var item in values) {
                         if (item.data['to'] == userto) {
@@ -113,10 +114,13 @@ class _choicechatState extends State<choicechat> {
                           userList.usermess = newmess;
                         } else {
                           newmess = '';
+                          new Loading();
                         }
                       }
 
-                      return Text(userList.usermess != null ? 'メッセージ：' + userList.usermess:'');
+                      return Text(userList.usermess != null ? 'メッセージ：' + userList.usermess:'' );
+                    } else if (snapshot.data == null) {
+                      return Loading();
                     }
                   },
                 ),
