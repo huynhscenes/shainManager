@@ -36,7 +36,6 @@ class DatabaseHelper {
   Future<int> insertManager(FetchDatafromSQLite fetchdata) async {
     var dbManager = await db;
     int res = await dbManager.insert("manageremps", fetchdata.toMap());
-    var res1 = await _db.query("manageremps");
     return res;
   }
 
@@ -46,6 +45,7 @@ class DatabaseHelper {
     List<FetchDatafromSQLite> employees = new List();
     for(int i = 0; i < list.length; i++){
       var manager = new FetchDatafromSQLite(
+        list[i]["id"],
         list[i]["ymdWork"],
         list[i]["enterbutton"] == 1 ? true : false,
         list[i]["outbutton"] == 1 ? true : false,

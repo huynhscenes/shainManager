@@ -144,22 +144,23 @@ class _ListtaikinState extends State<listtaikin> {
                   return ListView.builder(
                       itemCount: datas.length,
                       itemBuilder: (BuildContext context, int index) {
-                        var datework = datas[index].ymdWork.substring(6);
+                        if(datas[index].nowWorkenter != "" && datas[index].nowWorkout != ""){
+                          var datework = datas[index].ymdWork.substring(6);
                         var enterwork = datas[index].nowWorkenter;
                         var outwork = datas[index].nowWorkout;
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text('$datework日'),
-                            // SizedBox(
-                            //   width: 30.0,
-                            // ),
                             Text('$enterwork'),
                             SizedBox(width: 10.0,),
                             Text('$outwork'),
                             SizedBox(width: 30.0,)
                           ],
                         );
+
+                        }
+                        
                       });
                 } else {
                   return CircularProgressIndicator();
@@ -169,39 +170,6 @@ class _ListtaikinState extends State<listtaikin> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildListtime(data) {
-    ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context, int index) {
-        var datework = data[index].ymdWork.substring(6);
-        var enterwork = data[index].nowWorkenter;
-        var outwork = data[index].nowWorkout;
-        return Column(
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(
-                  width: 30.0,
-                  height: 50.0,
-                ),
-                Text('$datework日'),
-                SizedBox(
-                  width: 30.0,
-                ),
-                Text('$enterwork'),
-                SizedBox(
-                  width: 50.0,
-                ),
-                Text('$outwork')
-              ],
-            ),
-          ],
-        );
-      },
     );
   }
 }

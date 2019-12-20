@@ -8,6 +8,7 @@ class FetchDatafromSQLite {
   String nowWorkenter;
   String nowWorkout;
   FetchDatafromSQLite(
+     this.id,
       this.ymdWork,
       this.enterbutton,
       this.outbutton,
@@ -15,7 +16,7 @@ class FetchDatafromSQLite {
       this.imgdirout,
       this.nowWorkenter,
       this.nowWorkout);
-  
+  int get _id => id;
   String get _ymdWork => ymdWork;
   bool get _enterbutton => enterbutton;
   bool get _outbutton => outbutton;
@@ -26,6 +27,7 @@ class FetchDatafromSQLite {
 
   Map<String, dynamic> toMap(){
     var map = new Map<String,dynamic>();
+    map["id"] = _id;
     map["ymdWork"] = _ymdWork;
     map["enterbutton"] = _enterbutton;
     map["outbutton"] = _outbutton;
