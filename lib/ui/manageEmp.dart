@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/services.dart';
@@ -7,13 +8,13 @@ import 'package:the_gorgeous_login/style/CardItemModel.dart';
 import 'package:the_gorgeous_login/sqllite/database_helper.dart';
 import 'package:the_gorgeous_login/sqllite/model/fetchdata.dart';
 import 'listtaikin.dart';
-
 import 'dart:math' as math show sin, pi;
 
 class manageEmp extends StatefulWidget {
   @override
   State createState() => manageEmpState();
 }
+
 
 class Data {
   String ymdworkData;
@@ -47,17 +48,17 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
   String stringalldatetimeSavedOut = '';
   String stringalldatetimeNowOut = '';
   ScrollController scrollController;
-  TextEditingController _textFieldController = TextEditingController();
+  TextEditingController _textFieldSubject = new TextEditingController();
+  TextEditingController _textFieldAssignee = new TextEditingController();
+  TextEditingController _textFieldDescrip = new TextEditingController();
+  var listtextField = [];
+
   var cardsList = [
-    CardItemModel("Task 1 ", Icons.account_circle, 9, 0.83),
-    CardItemModel("Task 2", Icons.work, 12, 0.24),
-    CardItemModel("Task 3", Icons.home, 7, 0.32)
+    // CardItemModel("Task 1 ", Icons.account_circle, 9, 0.83),
+    // CardItemModel("Task 2", Icons.work, 12, 0.24),
+    // CardItemModel("Task 3", Icons.home, 7, 0.32)
   ];
-  var appColors = [
-    Color.fromRGBO(231, 129, 109, 1.0),
-    Color.fromRGBO(99, 138, 223, 1.0),
-    Color.fromRGBO(111, 194, 173, 1.0)
-  ];
+  var appColors = [];
   AnimationController animationController;
   ColorTween colorTween;
   CurvedAnimation curvedAnimation;
@@ -497,7 +498,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
       height: MediaQuery.of(context).size.height,
       child: ListView.builder(
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 3,
+        itemCount: listtextField.length,
         controller: scrollController,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, position) {
@@ -582,7 +583,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                       begin: currentColor, end: appColors[cardIndex]);
                 }
               } else {
-                if (cardIndex < 2) {
+                if (cardIndex < listtextField.length) {
                   cardIndex++;
                   colorTween = ColorTween(
                       begin: currentColor, end: appColors[cardIndex]);
@@ -622,7 +623,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                       children: <Widget>[
                         Text('題名'),
                         TextField(
-                        controller: _textFieldController,
+                        controller: _textFieldSubject,
                         decoration:
                             InputDecoration(hintText: ""),
                       ),
@@ -635,7 +636,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                       children: <Widget>[
                         Text('担当'),
                         TextField(
-                        controller: _textFieldController,
+                        controller: _textFieldAssignee,
                         decoration:
                             InputDecoration(hintText: ""),
                       ),
@@ -647,11 +648,18 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text('説明'),
-                        TextField(
-                        controller: _textFieldController,
+                        Container(
+                          padding: EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                            border: Border.all()
+                          ),
+                          child: TextField(
+                        maxLines: 8,
+                        controller: _textFieldDescrip,
                         decoration:
-                            InputDecoration(hintText: ""),
+                            InputDecoration.collapsed(hintText: ""),
                       ),
+                        )
                       ],
                     ),
                   ),
@@ -664,7 +672,18 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                         new FlatButton(
                           child: new Text('作成'),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            setState(() {
+                                             TextFieldList textlist = new TextFieldList();
+                            textlist.textFieldSubject = _textFieldSubject.text;
+                            textlist.textFieldAssignee = _textFieldAssignee.text;
+                            textlist.textFieldDescrip = _textFieldDescrip.text;
+                            listtextField.add(textlist);
+                            appColors.add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
+                            cardsList.add(
+    CardItemModel("Task 1 ", Icons.work, 9, 0.83));
+                            Navigator.of(context).pop();             
+                                                        });
+                            
                           },
                         ),
                         SizedBox(width: 30.0,),
@@ -695,4 +714,11 @@ class DelayTween extends Tween<double> {
 
   @override
   double evaluate(Animation<double> animation) => lerp(animation.value);
+}
+
+class TextFieldList {
+    String textFieldSubject;
+  String textFieldAssignee;
+  String textFieldDescrip;
+  TextFieldList({this.textFieldSubject,this.textFieldAssignee,this.textFieldDescrip});
 }
