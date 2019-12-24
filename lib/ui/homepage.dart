@@ -7,7 +7,6 @@ import 'package:the_gorgeous_login/ui/choicechat.dart';
 import 'package:the_gorgeous_login/ui/receiptphoto.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:the_gorgeous_login/ui/manageEmp.dart';
 import 'package:the_gorgeous_login/style/oval-right-clipper.dart';
 void main() => runApp(new HomePage());
