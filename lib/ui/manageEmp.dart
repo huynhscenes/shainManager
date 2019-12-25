@@ -8,13 +8,13 @@ import 'package:the_gorgeous_login/style/CardItemModel.dart';
 import 'package:the_gorgeous_login/sqllite/database_helper.dart';
 import 'package:the_gorgeous_login/sqllite/model/fetchdata.dart';
 import 'listtaikin.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math' as math show sin, pi;
 
 class manageEmp extends StatefulWidget {
   @override
   State createState() => manageEmpState();
 }
-
 
 class Data {
   String ymdworkData;
@@ -25,6 +25,7 @@ class Data {
 
 class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
   var db = new DatabaseHelper();
+  final Firestore _firestore = Firestore.instance;
   String _connectionStatus = 'Unknown';
   String idwifi = '';
   String imgdirenter = 'assets/img/enter.gif';
@@ -95,6 +96,23 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
     }
 
     _updateConnectionStatus(result);
+  }
+
+  Future<void> createtask() async {
+    await _firestore.collection('stack').add({
+      'subject': _textFieldSubject.text,
+      'assignee': _textFieldAssignee.text,
+      'descrip': _textFieldDescrip.text,
+      'timecreate': FieldValue.serverTimestamp()
+    });
+    // TextFieldList textlist = new TextFieldList();
+    // textlist.textFieldSubject = _textFieldSubject.text;
+    // textlist.textFieldAssignee = _textFieldAssignee.text;
+    // textlist.textFieldDescrip = _textFieldDescrip.text;
+    // listtextField.add(textlist);
+    // appColors.add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
+    // cardsList
+    //     .add(CardItemModel(textlist.textFieldSubject, Icons.work, 9, 0.83));
   }
 
   @override
@@ -441,49 +459,52 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
               ]));
     } else {
       return Center(
-        child: Text('会社のネットに接続してください',style: TextStyle(fontWeight: FontWeight.bold,fontSize:16.0, color: Colors.white),)
-      );
+          child: Text(
+        '会社のネットに接続してください',
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 16.0, color: Colors.white),
+      ));
     }
   }
 
   Widget timeToWork(nowWorkenter, nowWorkout) {
     return SingleChildScrollView(
       child: Column(
-      children: <Widget>[
-        Container(
-          decoration: myBoxDecoration(),
-          child: Container(
-            height: 50.0,
-            width: MediaQuery.of(context).size.width - 100.0,
-            padding: EdgeInsets.only(top: 15.0),
-            child: Text(
-              '本日、$nowyear年$nowmonth月$nowday日',
-              textAlign: TextAlign.center,
+        children: <Widget>[
+          Container(
+            decoration: myBoxDecoration(),
+            child: Container(
+              height: 50.0,
+              width: MediaQuery.of(context).size.width - 100.0,
+              padding: EdgeInsets.only(top: 15.0),
+              child: Text(
+                '本日、$nowyear年$nowmonth月$nowday日',
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
-        ),
-        Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                  left: 80.0, top: 10.0, bottom: 10.0, right: 10.0),
-              child: Text('出勤の時間　：    ' + nowWorkenter),
-            ),
-            Container()
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                  left: 80.0, top: 10.0, bottom: 10.0, right: 10.0),
-              child: Text('退勤の時間　：    ' + nowWorkout),
-            ),
-            Container()
-          ],
-        ),
-      ],
-    ),
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                    left: 80.0, top: 10.0, bottom: 10.0, right: 10.0),
+                child: Text('出勤の時間　：    ' + nowWorkenter),
+              ),
+              Container()
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                    left: 80.0, top: 10.0, bottom: 10.0, right: 10.0),
+                child: Text('退勤の時間　：    ' + nowWorkout),
+              ),
+              Container()
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -495,114 +516,135 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
 
   bottomlistTask() {
     return Container(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: listtextField.length,
-        controller: scrollController,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, position) {
-          return GestureDetector(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                child: Container(
-                  width: 250.0,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Icon(
-                              cardsList[position].icon,
-                              color: appColors[position],
-                            ),
-                            Icon(
-                              Icons.more_vert,
-                              color: Colors.grey,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+        height: MediaQuery.of(context).size.height,
+        child: StreamBuilder<QuerySnapshot>(
+          stream:
+              _firestore.collection('stack').orderBy('timescreate').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+              
+            appColors.add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
+            List<DocumentSnapshot> docs = snapshot.data.documents;
+            docs.map((doc) {
+              TextFieldList textlist = new TextFieldList();
+              textlist.textFieldSubject = doc.data['subject'];
+              textlist.textFieldAssignee = doc.data['assignee'];
+              textlist.textFieldDescrip = doc.data['descrip'];
+              listtextField.add(textlist);
+            }).toList();
+            return ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: listtextField.length,
+              controller: scrollController,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, position) {
+                return GestureDetector(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: Container(
+                        width: 250.0,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
-                              child: Text(
-                                "${cardsList[position].tasksRemaining} Tasks",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
-                              child: Text(
-                                "${cardsList[position].cardTitle}",
-                                style: TextStyle(fontSize: 28.0),
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.work,
+                                    color: appColors[position],
+                                  ),
+                                  Icon(
+                                    Icons.more_vert,
+                                    color: Colors.grey,
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: LinearProgressIndicator(
-                                value: cardsList[position].taskCompletion,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 4.0),
+                                    child: Text(
+                                      "${listtextField[position].subject} Tasks",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 4.0),
+                                    child: Text(
+                                      "${listtextField[position].assignee}",
+                                      style: TextStyle(fontSize: 28.0),
+                                    ),
+                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.all(8.0),
+                                  //   child: LinearProgressIndicator(
+                                  //     value: cardsList[position].taskCompletion,
+                                  //   ),
+                                  // ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0)),
+                    ),
                   ),
-                ),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0)),
-              ),
-            ),
-            onHorizontalDragEnd: (details) {
-              animationController = AnimationController(
-                  vsync: this, duration: Duration(milliseconds: 500));
-              curvedAnimation = CurvedAnimation(
-                  parent: animationController, curve: Curves.fastOutSlowIn);
-              animationController.addListener(() {
-                setState(() {
-                  currentColor = colorTween.evaluate(curvedAnimation);
-                });
-              });
+                  onHorizontalDragEnd: (details) {
+                    animationController = AnimationController(
+                        vsync: this, duration: Duration(milliseconds: 500));
+                    curvedAnimation = CurvedAnimation(
+                        parent: animationController,
+                        curve: Curves.fastOutSlowIn);
+                    animationController.addListener(() {
+                      setState(() {
+                        currentColor = colorTween.evaluate(curvedAnimation);
+                      });
+                    });
 
-              if (details.velocity.pixelsPerSecond.dx > 0) {
-                if (cardIndex > 0) {
-                  cardIndex--;
-                  colorTween = ColorTween(
-                      begin: currentColor, end: appColors[cardIndex]);
-                }
-              } else {
-                if (cardIndex < listtextField.length) {
-                  cardIndex++;
-                  colorTween = ColorTween(
-                      begin: currentColor, end: appColors[cardIndex]);
-                }
-              }
-              setState(() {
-                scrollController.animateTo((cardIndex) * 256.0,
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.fastOutSlowIn);
-              });
+                    if (details.velocity.pixelsPerSecond.dx > 0) {
+                      if (cardIndex > 0) {
+                        cardIndex--;
+                        colorTween = ColorTween(
+                            begin: currentColor, end: appColors[cardIndex]);
+                      }
+                    } else {
+                      if (cardIndex < listtextField.length) {
+                        cardIndex++;
+                        colorTween = ColorTween(
+                            begin: currentColor, end: appColors[cardIndex]);
+                      }
+                    }
+                    setState(() {
+                      scrollController.animateTo((cardIndex) * 256.0,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.fastOutSlowIn);
+                    });
 
-              colorTween.animate(curvedAnimation);
+                    colorTween.animate(curvedAnimation);
 
-              animationController.forward();
-            },
-          );
-        },
-      ),
-    );
+                    animationController.forward();
+                  },
+                );
+              },
+            );
+          },
+        ));
   }
 
   _showdialogTask() async {
@@ -614,85 +656,75 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
             content: Form(
               child: SingleChildScrollView(
                 child: Container(
-              height: MediaQuery.of(context).size.height -350,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('題名'),
-                        TextField(
-                        controller: _textFieldSubject,
-                        decoration:
-                            InputDecoration(hintText: ""),
+                  height: MediaQuery.of(context).size.height - 350,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('題名'),
+                            TextField(
+                              controller: _textFieldSubject,
+                              decoration: InputDecoration(hintText: ""),
+                            ),
+                          ],
+                        ),
                       ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('担当'),
-                        TextField(
-                        controller: _textFieldAssignee,
-                        decoration:
-                            InputDecoration(hintText: ""),
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('担当'),
+                            TextField(
+                              controller: _textFieldAssignee,
+                              decoration: InputDecoration(hintText: ""),
+                            ),
+                          ],
+                        ),
                       ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text('説明'),
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all()
-                          ),
-                          child: TextField(
-                        maxLines: 8,
-                        controller: _textFieldDescrip,
-                        decoration:
-                            InputDecoration.collapsed(hintText: ""),
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('説明'),
+                            Container(
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(border: Border.all()),
+                              child: TextField(
+                                maxLines: 8,
+                                controller: _textFieldDescrip,
+                                decoration:
+                                    InputDecoration.collapsed(hintText: ""),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                        )
-                      ],
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
               ),
             ),
             actions: <Widget>[
-                        new FlatButton(
-                          child: new Text('作成'),
-                          onPressed: () {
-                            setState(() {
-                                             TextFieldList textlist = new TextFieldList();
-                            textlist.textFieldSubject = _textFieldSubject.text;
-                            textlist.textFieldAssignee = _textFieldAssignee.text;
-                            textlist.textFieldDescrip = _textFieldDescrip.text;
-                            listtextField.add(textlist);
-                            appColors.add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
-                            cardsList.add(
-    CardItemModel("Task 1 ", Icons.work, 9, 0.83));
-                            Navigator.of(context).pop();             
-                                                        });
-                            
-                          },
-                        ),
-                        SizedBox(width: 30.0,),
-                        new FlatButton(
-                          child: new Text('キャンセル'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        )
+              new FlatButton(
+                child: new Text('作成'),
+                onPressed: () {
+                  setState(() {
+                    createtask();
+                    Navigator.of(context).pop();
+                  });
+                },
+              ),
+              SizedBox(
+                width: 30.0,
+              ),
+              new FlatButton(
+                child: new Text('キャンセル'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
             ],
           );
         });
@@ -717,8 +749,9 @@ class DelayTween extends Tween<double> {
 }
 
 class TextFieldList {
-    String textFieldSubject;
+  String textFieldSubject;
   String textFieldAssignee;
   String textFieldDescrip;
-  TextFieldList({this.textFieldSubject,this.textFieldAssignee,this.textFieldDescrip});
+  TextFieldList(
+      {this.textFieldSubject, this.textFieldAssignee, this.textFieldDescrip});
 }

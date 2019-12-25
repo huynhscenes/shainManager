@@ -84,9 +84,9 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 10.0),
             _buildSkillRow("PHP",0.75),
             SizedBox(height: 5.0),
-            _buildSkillRow("HTML-CSS-JS-JQUERY-AJAX",0.5),
+            _buildSkillRow("HTML-CSS-JS-Jquery-Ajax",0.5),
             SizedBox(height: 5.0),
-            _buildSkillRow("MYSQL-SQLSERVER",0.65),
+            _buildSkillRow("mySQL-SQLServer",0.65),
             SizedBox(height: 5.0),
             _buildSkillRow("PYTHON",0.6),
             Container(
@@ -98,11 +98,11 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             SizedBox(height: 10.0),
-            _buildSkillRow("ANDROID",0.5),
+            _buildSkillRow("Java-Android",0.5),
             SizedBox(height: 5.0),
-            _buildSkillRow("IONIC",0.6),
+            _buildSkillRow("AngularJS - Ionic",0.6),
             SizedBox(height: 5.0),
-            _buildSkillRow("Flutter",0.5),
+            _buildSkillRow("Dart-Flutter",0.5),
             Container(
               child: Row(
                 children: <Widget>[
