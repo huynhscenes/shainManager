@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import "package:intl/intl.dart";
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +35,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
   int id;
   var enterbutton = false;
   var outbutton = false;
+  var clickicondeleteTask = false;
   var datetimenow;
   var nowhourenter = '';
   var nowminuenter = '';
@@ -117,7 +120,12 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      appColors
+          .add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
+    });
     return Scaffold(
+      resizeToAvoidBottomInset:false,
       backgroundColor: currentColor,
       appBar: AppBar(
         title: const Text('勤怠'),
@@ -518,21 +526,28 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
     return Container(
         height: MediaQuery.of(context).size.height,
         child: StreamBuilder<QuerySnapshot>(
-          stream:
-              _firestore.collection('stack').orderBy('timescreate').snapshots(),
+          stream: _firestore
+              .collection('stack')
+              .orderBy('timecreate', descending: true)
+              .snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
               );
-              
-            appColors.add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
+            } else{
+            listtextField = [];
             List<DocumentSnapshot> docs = snapshot.data.documents;
-            docs.map((doc) {
+            docs.map((doc) async {
+              initializeDateFormatting("ja_JP");
               TextFieldList textlist = new TextFieldList();
               textlist.textFieldSubject = doc.data['subject'];
               textlist.textFieldAssignee = doc.data['assignee'];
               textlist.textFieldDescrip = doc.data['descrip'];
+              var secondsdatetime = doc.data['timecreate'].microsecondsSinceEpoch;
+              DateTime credatetime = DateTime.fromMicrosecondsSinceEpoch(secondsdatetime);
+              var formatter = new DateFormat('yyyy年MM月dd(E) HH:mm', "ja_JP");
+              textlist.datetimecreate = formatter.format(credatetime);
               listtextField.add(textlist);
             }).toList();
             return ListView.builder(
@@ -547,56 +562,141 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                     child: Card(
                       child: Container(
                         width: 250.0,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Stack(
+                          alignment: Alignment.topRight,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.work,
-                                    color: appColors[position],
-                                  ),
-                                  Icon(
-                                    Icons.more_vert,
-                                    color: Colors.grey,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 4.0),
-                                    child: Text(
-                                      "${listtextField[position].subject} Tasks",
-                                      style: TextStyle(color: Colors.grey),
+                            clickicondeleteTask
+                                ? Positioned(
+                                    top: MediaQuery.of(context).padding.top +
+                                        30.0,
+                                    right:
+                                        MediaQuery.of(context).padding.right +
+                                            30.0,
+                                    child: InkWell(
+                                      child: Container(
+                                        color:
+                                            Color.fromRGBO(209, 209, 209, 10),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Icon(Icons.delete),
+                                            Text('削除')
+                                          ],
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        setState( () {
+                                          print("hellooo ${listtextField[position].textFieldSubject}");
+                                          clickicondeleteTask = false;
+                                        });
+                                      },
+                                    ))
+                                : Text(''),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 8.0, left: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.work,
+                                          color: appColors[position],
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          child: IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                clickicondeleteTask = true;
+                                              });
+                                            },
+                                            icon: Icon(
+                                              Icons.more_vert,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 4.0),
-                                    child: Text(
-                                      "${listtextField[position].assignee}",
-                                      style: TextStyle(fontSize: 28.0),
+                                  flex: 2,
+                                ),
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 8.0, left: 8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0, vertical: 4.0),
+                                          child: Text(
+                                            "題名 : ${listtextField[position].textFieldSubject}",
+                                            style: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 18.0),
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0, vertical: 4.0),
+                                          child: Text(
+                                            "担当者：${listtextField[position].textFieldAssignee}",
+                                            style: TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 12.0),
+                                          ),
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height -
+                                              500.0,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0, vertical: 4.0),
+                                            child: Text(
+                                              "${listtextField[position].textFieldDescrip}",
+                                              style: TextStyle(
+                                                  color: Colors.black87),
+                                              maxLines: 8,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.all(8.0),
-                                  //   child: LinearProgressIndicator(
-                                  //     value: cardsList[position].taskCompletion,
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
+                                  flex: 11,
+                                ),
+                                Flexible(
+                                  child: Container(
+                                    padding: EdgeInsets.all(2.0),
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Text(
+                                      listtextField[position]
+                                          .datetimecreate
+                                          .toString(),
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                  flex: 1,
+                                )
+                              ],
                             ),
                           ],
                         ),
@@ -616,18 +716,19 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                         currentColor = colorTween.evaluate(curvedAnimation);
                       });
                     });
-
-                    if (details.velocity.pixelsPerSecond.dx > 0) {
-                      if (cardIndex > 0) {
-                        cardIndex--;
-                        colorTween = ColorTween(
-                            begin: currentColor, end: appColors[cardIndex]);
-                      }
-                    } else {
-                      if (cardIndex < listtextField.length) {
-                        cardIndex++;
-                        colorTween = ColorTween(
-                            begin: currentColor, end: appColors[cardIndex]);
+                    if (details.primaryVelocity != 0.0) {
+                      if (details.velocity.pixelsPerSecond.dx > 0) {
+                        if (cardIndex > 0) {
+                          cardIndex--;
+                          colorTween = ColorTween(
+                              begin: currentColor, end: appColors[cardIndex]);
+                        }
+                      } else {
+                        if (cardIndex < listtextField.length) {
+                          cardIndex++;
+                          colorTween = ColorTween(
+                              begin: currentColor, end: appColors[cardIndex]);
+                        }
                       }
                     }
                     setState(() {
@@ -643,11 +744,26 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                 );
               },
             );
-          },
+          }
+          }
         ));
   }
 
+  stackdelete() {
+    return Container(
+      color: Colors.grey,
+      width: 200.0,
+      height: 200.0,
+      child: Row(
+        children: <Widget>[Icon(Icons.delete), Text('削除')],
+      ),
+    );
+  }
+
   _showdialogTask() async {
+    _textFieldAssignee.clear();
+    _textFieldSubject.clear();
+    _textFieldDescrip.clear();
     return showDialog(
         context: context,
         builder: (context) {
@@ -666,6 +782,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                             Text('題名'),
                             TextField(
                               controller: _textFieldSubject,
+                              keyboardType: TextInputType.text,
                               decoration: InputDecoration(hintText: ""),
                             ),
                           ],
@@ -678,6 +795,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                             Text('担当'),
                             TextField(
                               controller: _textFieldAssignee,
+                              keyboardType: TextInputType.text,
                               decoration: InputDecoration(hintText: ""),
                             ),
                           ],
@@ -694,6 +812,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                               child: TextField(
                                 maxLines: 8,
                                 controller: _textFieldDescrip,
+                                keyboardType: TextInputType.text,
                                 decoration:
                                     InputDecoration.collapsed(hintText: ""),
                               ),
@@ -752,6 +871,10 @@ class TextFieldList {
   String textFieldSubject;
   String textFieldAssignee;
   String textFieldDescrip;
+  String datetimecreate;
   TextFieldList(
-      {this.textFieldSubject, this.textFieldAssignee, this.textFieldDescrip});
+      {this.textFieldSubject,
+      this.textFieldAssignee,
+      this.textFieldDescrip,
+      this.datetimecreate});
 }
