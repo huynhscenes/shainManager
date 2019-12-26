@@ -565,32 +565,6 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                         child: Stack(
                           alignment: Alignment.topRight,
                           children: <Widget>[
-                            clickicondeleteTask
-                                ? Positioned(
-                                    top: MediaQuery.of(context).padding.top +
-                                        30.0,
-                                    right:
-                                        MediaQuery.of(context).padding.right +
-                                            30.0,
-                                    child: InkWell(
-                                      child: Container(
-                                        color:
-                                            Color.fromRGBO(209, 209, 209, 10),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Icon(Icons.delete),
-                                            Text('削除')
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        setState( () {
-                                          print("hellooo ${listtextField[position].textFieldSubject}");
-                                          clickicondeleteTask = false;
-                                        });
-                                      },
-                                    ))
-                                : Text(''),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -614,10 +588,18 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                           child: IconButton(
                                             onPressed: () {
                                               setState(() {
+                                                if(clickicondeleteTask){
+                                                  _firestore.collection('stack').document(snapshot.data.documents[position].documentID).delete();
+                                                }
                                                 clickicondeleteTask = true;
                                               });
                                             },
-                                            icon: Icon(
+                                            icon: clickicondeleteTask ? 
+                                            Icon(
+                                              Icons.remove_circle,
+                                              color: Colors.red, size: 40.0,
+                                            ):
+                                            Icon(
                                               Icons.more_vert,
                                               color: Colors.grey,
                                             ),
@@ -629,14 +611,15 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                   flex: 2,
                                 ),
                                 Flexible(
-                                  child: Padding(
+                                  child: Container(
                                     padding: const EdgeInsets.only(
                                         right: 8.0, left: 8.0),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Padding(
+                                        Flexible(
+                                          child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0, vertical: 4.0),
                                           child: Text(
@@ -647,7 +630,10 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                             maxLines: 2,
                                           ),
                                         ),
-                                        Padding(
+                                        flex: 1,
+                                        ),
+                                        Flexible(
+                                          child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8.0, vertical: 4.0),
                                           child: Text(
@@ -657,13 +643,12 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                                 fontSize: 12.0),
                                           ),
                                         ),
-                                        Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height -
-                                              500.0,
+                                        flex: 1,
+                                        ),
+                                        Flexible(
+                                          child: Container(
+                                          width:MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context).size.height,
                                           decoration: BoxDecoration(
                                               border: Border.all(
                                                   color: Colors.grey)),
@@ -677,6 +662,8 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                               maxLines: 8,
                                             ),
                                           ),
+                                        ),
+                                        flex: 9,
                                         ),
                                       ],
                                     ),
@@ -730,6 +717,8 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                               begin: currentColor, end: appColors[cardIndex]);
                         }
                       }
+                    } else {
+                      clickicondeleteTask = false;
                     }
                     setState(() {
                       scrollController.animateTo((cardIndex) * 256.0,
@@ -747,17 +736,6 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
           }
           }
         ));
-  }
-
-  stackdelete() {
-    return Container(
-      color: Colors.grey,
-      width: 200.0,
-      height: 200.0,
-      child: Row(
-        children: <Widget>[Icon(Icons.delete), Text('削除')],
-      ),
-    );
   }
 
   _showdialogTask() async {
