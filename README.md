@@ -15,4 +15,12 @@
 
 </br></br>
 <b>update : 2019年12月27</b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-6df47b4b53a8.gif)]
+<b>１。Firebase検証でログインと登録： </b>
+[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-d476f93bee01.gif)]
+</br>
+<b>２。：社内のWifiに確認すること： </b>
+[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-c373369f7c78.gif)]
+</br>
+<b>３。：タスクを追加すること：（redmine同様） </b>
+[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-2040515e380a.gif)]
+
