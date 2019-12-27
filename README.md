@@ -16,7 +16,7 @@
 </br></br>
 <b>update : 2019年12月27</b></br>
 <b>１。Firebase検証でログインと登録： </b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-d476f93bee01.gif)]
+https://im6.ezgif.com/tmp/ezgif-6-d476f93bee01.gif
 </br>
 <b>２。：社内のWifiに確認すること： </b>
 [![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-c373369f7c78.gif)]
