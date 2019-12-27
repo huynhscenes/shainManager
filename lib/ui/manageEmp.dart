@@ -630,7 +630,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                             maxLines: 2,
                                           ),
                                         ),
-                                        flex: 1,
+                                        flex: 2,
                                         ),
                                         Flexible(
                                           child: Padding(
@@ -663,7 +663,7 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                             ),
                                           ),
                                         ),
-                                        flex: 9,
+                                        flex: 8,
                                         ),
                                       ],
                                     ),
@@ -804,8 +804,14 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
               ),
             ),
             actions: <Widget>[
-              new FlatButton(
-                child: new Text('作成'),
+              Container(
+                padding: new EdgeInsets.all(5.0),
+                decoration: new BoxDecoration(
+                  color: const Color(0xFFffb304),
+                  borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: new FlatButton(
+                child: new Text('作成',style: TextStyle(color: Colors.white),),
                 onPressed: () {
                   setState(() {
                     createtask();
@@ -813,15 +819,25 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                   });
                 },
               ),
+              ),
               SizedBox(
                 width: 30.0,
               ),
-              new FlatButton(
-                child: new Text('キャンセル'),
+              Container(
+                padding: new EdgeInsets.all(5.0),
+                decoration: new BoxDecoration(
+                  color: const Color(0xFFffb304),
+                  borderRadius: BorderRadius.circular(10.0)
+                ),
+                child: new FlatButton(
+                child: new Text('キャンセル',style: TextStyle(color: Colors.white),),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  setState(() {
+                    Navigator.of(context).pop();
+                  });
                 },
-              )
+              ),
+              ),
             ],
           );
         });
