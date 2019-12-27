@@ -15,4 +15,4 @@
 
 </br></br>
 <b>update : 2019年12月27</b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-e946ee68ab0d.gif)]
+[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-6edc1afc28b3.gif)]
