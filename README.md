@@ -14,7 +14,7 @@
   </span>
 
 </br></br>
-<b>update : 2019年12月27</b>
+<b>update : 2019年12月27</b></br>
 <b>１。Firebase検証でログインと登録： </b>
 [![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-d476f93bee01.gif)]
 </br>
