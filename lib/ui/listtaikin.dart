@@ -97,16 +97,25 @@ class _ListtaikinState extends State<listtaikin> {
     nowmonth = datetimenow.month.toString();
 
     return Container(
+      padding: EdgeInsets.all(10.0),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Column(
         children: <Widget>[
           Container(
-            color: Colors.yellow,
+            decoration: BoxDecoration(
+              color: Color(0xff00bfa5),
+              borderRadius: BorderRadius.circular(30.0)
+            ),
+            width: MediaQuery.of(context).size.width,
             child: Text('$nowyear年$nowmonth月',
-                style: new TextStyle(fontSize: 20.0, color: Colors.green)),
+                style: new TextStyle(fontSize: 20.0, color: Colors.white),textAlign: TextAlign.center,),
           ),
           Container(
+            child: Card(
+            child: Column(
+              children: <Widget>[
+                Container(
             width: MediaQuery.of(context).size.width - 30.0,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -168,6 +177,18 @@ class _ListtaikinState extends State<listtaikin> {
               },
             ),
           ),
+              ],
+            ),
+          ),
+          decoration: new BoxDecoration(
+                      boxShadow: [
+                        new BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 10.0,
+                        ),
+                      ],
+                    ),
+          )
         ],
       ),
     );

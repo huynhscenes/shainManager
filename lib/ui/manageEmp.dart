@@ -745,12 +745,21 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text('チケット作成'),
-            content: Form(
+          return Container(
+            child: AlertDialog(
+            title: Container(
+              decoration: BoxDecoration(
+                 color: Color(0xff00bfa5),
+                 borderRadius: BorderRadius.circular(10.0)
+              ),
+              child: Text('チケット作成',style: TextStyle(color: Colors.white),textAlign: TextAlign.center),
+                         ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(32.0)
+            )),
+            content: Container(
               child: SingleChildScrollView(
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 350,
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -805,6 +814,12 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
             ),
             actions: <Widget>[
               Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.all(15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Container(
                 padding: new EdgeInsets.all(5.0),
                 decoration: new BoxDecoration(
                   color: const Color(0xFFffb304),
@@ -819,9 +834,6 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                   });
                 },
               ),
-              ),
-              SizedBox(
-                width: 30.0,
               ),
               Container(
                 padding: new EdgeInsets.all(5.0),
@@ -838,7 +850,11 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                 },
               ),
               ),
+                  ],
+                ),
+              )
             ],
+          )
           );
         });
   }
