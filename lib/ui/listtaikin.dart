@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import "package:intl/intl.dart";
+import 'package:intl/date_symbol_data_local.dart';
 
 // import 'package:the_gorgeous_login/sqllite/fetchdata.dart';
 import 'package:the_gorgeous_login/sqllite/database_helper.dart';
@@ -20,6 +22,14 @@ class _ListtaikinState extends State<listtaikin> {
   var nowmonth = '';
   var nowday = '';
   var datetimenow;
+  var yearwork;
+  var monthwork;
+  var daywork;
+  var dayworklist = [];
+  var enterwork;
+  var outwork;
+  var yearformat;
+  var monthformat;
 
   @override
   void initState() {
@@ -31,42 +41,15 @@ class _ListtaikinState extends State<listtaikin> {
     return Scaffold(
         appBar: AppBar(
           title: Text('勤怠一覧'),
-          actions: <Widget>[
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(100.0),
-                  side: BorderSide(color: Colors.red)),
-              color: Colors.greenAccent,
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    iconSize: 5.0,
-                    icon: new Image.asset("assets/img/excelicon.png"),
-                  ),
-                  Text('EXCEL提出')
-                ],
-              ),
-              onPressed: () {
-                db.getManager().then((results) {
-                  print(results);
-                  for (var result in results) {
-                    sendtimeworkDatabase(result);
-                  }
-                });
-              },
-            )
-          ],
         ),
         body: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height >= 775.0
-              ? MediaQuery.of(context).size.height
-              : 775.0,
+          height: MediaQuery.of(context).size.height,
           child: _ListtimedateState(),
         ));
   }
 
-  Future<List<FetchDatafromSQLite>> sendtimeworkDatabase(data) async {
+  Future<List<FetchDatafromSQLite>> sendtimeworkDatabase(data, flag) async {
     final databaseReference = FirebaseDatabase.instance.reference();
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     if (user.uid != null) {
@@ -86,6 +69,13 @@ class _ListtaikinState extends State<listtaikin> {
         'nowWorkenter': data.nowWorkenter,
         'nowWorkout': data.nowWorkout
       });
+      databaseReference
+          .reference()
+          .child('users')
+          .child(user.uid)
+          .child('timework').update({
+            'flag' : flag
+          });
       print("時刻を更新しました");
     }
   }
@@ -97,100 +87,217 @@ class _ListtaikinState extends State<listtaikin> {
     nowmonth = datetimenow.month.toString();
 
     return Container(
-      padding: EdgeInsets.all(10.0),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: Column(
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xff00bfa5),
-              borderRadius: BorderRadius.circular(30.0)
+        padding: EdgeInsets.all(5.0),
+        decoration: new BoxDecoration(
+          boxShadow: [
+            new BoxShadow(
+              color: Colors.grey,
+              blurRadius: 10.0,
             ),
-            width: MediaQuery.of(context).size.width,
-            child: Text('$nowyear年$nowmonth月',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white),textAlign: TextAlign.center,),
-          ),
-          Container(
-            child: Card(
-            child: Column(
-              children: <Widget>[
-                Container(
-            width: MediaQuery.of(context).size.width - 30.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Container(
-                  height: 50.0,
-                  padding: EdgeInsets.only(top: 15.0),
-                  decoration: BoxDecoration(border: Border.all()),
-                  width: MediaQuery.of(context).size.width - 270.0,
-                  child: Text(
-                    '出勤の時間',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  height: 50.0,
-                  padding: EdgeInsets.only(top: 15.0),
-                  decoration: BoxDecoration(border: Border.all()),
-                  width: MediaQuery.of(context).size.width - 270.0,
-                  child: Text(
-                    '退勤の時間',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: 100.0,
-            child: FutureBuilder<List<FetchDatafromSQLite>>(
-              future: db.getManager(),
-              builder: (context, snapshot) {
-                var datas = snapshot.data;
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      itemCount: datas.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if(datas[index].nowWorkenter != "" && datas[index].nowWorkout != ""){
-                          var datework = datas[index].ymdWork.substring(6);
-                        var enterwork = datas[index].nowWorkenter;
-                        var outwork = datas[index].nowWorkout;
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text('$datework日'),
-                            Text('$enterwork'),
-                            SizedBox(width: 10.0,),
-                            Text('$outwork'),
-                            SizedBox(width: 30.0,)
-                          ],
-                        );
-
-                        }
-                        
-                      });
-                } else {
-                  return CircularProgressIndicator();
-                }
-              },
-            ),
-          ),
-              ],
-            ),
-          ),
-          decoration: new BoxDecoration(
-                      boxShadow: [
-                        new BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 10.0,
-                        ),
-                      ],
-                    ),
-          )
-        ],
-      ),
-    );
+          ],
+        ),
+        child: FutureBuilder<List<FetchDatafromSQLite>>(
+          future: db.getManager(),
+          builder: (context, snapshot) {
+            var datas = snapshot.data;
+            if (snapshot.hasData) {
+              return ListView.builder(
+                  itemCount: datas.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (datas[index].nowWorkenter != "" &&
+                        datas[index].nowWorkout != "") {
+                      yearwork = datas[index].ymdWork.substring(0, 4);
+                      if (monthwork != datas[index].ymdWork.substring(4, 6)) {
+                        monthwork = datas[index].ymdWork.substring(4, 6);
+                        return SingleChildScrollView(
+                            padding: EdgeInsets.all(10.0),
+                            child: Container(
+                              child: Card(
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      color: Color(0xff00bfa5),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Text(
+                                        '$yearwork年$monthwork月',
+                                        style: new TextStyle(
+                                            fontSize: 27.0,
+                                            color: Colors.white),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height -
+                                              350,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height -
+                                                800.0,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                30.0,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: <Widget>[
+                                                Container(
+                                                  height: 50.0,
+                                                  padding: EdgeInsets.only(
+                                                      top: 15.0),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all()),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      270.0,
+                                                  child: Text(
+                                                    '出勤の時間',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  height: 50.0,
+                                                  padding: EdgeInsets.only(
+                                                      top: 15.0),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all()),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      270.0,
+                                                  child: Text(
+                                                    '退勤の時間',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                              padding: EdgeInsets.all(2.0),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height -
+                                                  500.0,
+                                              child: ListView.builder(
+                                                itemCount: datas.length,
+                                                itemBuilder: (context, count) {
+                                                  // format datetime to japan timezone
+                                                  initializeDateFormatting(
+                                                      "ja_JP");
+                                                  yearformat = datas[count]
+                                                      .ymdWork
+                                                      .substring(0, 4);
+                                                  monthformat = datas[count].ymdWork.substring(4, 6);
+                                                  daywork = datas[count]
+                                                      .ymdWork
+                                                      .substring(6);
+                                                  DateTime credatetime =
+                                                      new DateTime(
+                                                          int.parse(yearformat),
+                                                          int.parse(
+                                                              monthformat),
+                                                          int.parse(daywork));
+                                                  var formatter =
+                                                      new DateFormat(
+                                                          'yyyy年MM月dd日(E)',
+                                                          "ja_JP");
+                                                  var datetimeformat = formatter
+                                                      .format(credatetime);
+                                                  var dateformat =
+                                                      datetimeformat.substring(
+                                                          8); // format to only date
+                                                  print('this is format : ' +
+                                                      dateformat);
+                                                  enterwork =
+                                                      datas[count].nowWorkenter;
+                                                  outwork =
+                                                      datas[count].nowWorkout;
+                                                  return (datas[count]
+                                                              .ymdWork
+                                                              .substring(4, 6)
+                                                              .toString() ==
+                                                          monthwork)
+                                                      ? 
+                                                      Column(
+                                                        children: <Widget>[
+                                                          Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: <Widget>[
+                                                            Text('$dateformat'),
+                                                            Text('$enterwork'),
+                                                            SizedBox(
+                                                              width: 10.0,
+                                                            ),
+                                                            Text('$outwork'),
+                                                            SizedBox(
+                                                              width: 30.0,
+                                                            )
+                                                          ],
+                                                        )
+                                                        ],
+                                                      )
+                                                      : SizedBox(
+                                                          height: 0.0,
+                                                        );
+                                                },
+                                              )),
+                                          Container(
+                                            width: MediaQuery.of(context).size.width -250.0,
+                                            child: RaisedButton(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    new BorderRadius.circular(
+                                                        100.0),
+                                                side: BorderSide(
+                                                    color: Colors.red)
+                                                    ),
+                                            color: Colors.white70,
+                                            child: Row(
+                                              children: <Widget>[
+                                                IconButton(
+                                                  iconSize: 5.0,
+                                                  icon: new Image.asset(
+                                                      "assets/img/excelicon.png"),
+                                                ),
+                                                Text('EXCEL提出')
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              var sendyear = datas[index].ymdWork.substring(0, 4).toString(); 
+                                              var sendmonth = datas[index].ymdWork.substring(4, 6).toString();
+                                              var sendyearmonth = sendyear + sendmonth;
+                                              db.getManager().then((results) {
+                                                for (var result in results) {
+                                                  if(result.ymdWork.substring(0,6) == sendyearmonth){
+                                                    sendtimeworkDatabase(result,sendyearmonth);
+                                                  }
+                                                }
+                                              });
+                                            },
+                                          ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ));
+                      }
+                    }
+                  });
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ));
   }
 }
