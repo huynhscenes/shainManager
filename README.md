@@ -16,23 +16,28 @@
 </br></br>
 <b>update : 2019年12月27</b></br>
 <b>１。Firebase検証でログインと登録： </b>
-</br>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-dd889377e753.gif)]
+<br>
+<span>
+![alt text](https://i.imgur.com/405QHuv.png)
+![alt text](https://i.imgur.com/jR68sGc.png)
+![alt text](https://i.imgur.com/yX1AI6e.png)
+![alt text](https://i.imgur.com/s2Ijpwb.png)
+</span>
 </br>
 <b>２。社内のWifiに確認すること： </b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-c373369f7c78.gif)]
+
 </br>
 <b>３。タスクを追加すること：（redmine同様） </b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-2040515e380a.gif)]
+
 </br>
 <b>４。EXCELのファイルを提出：</b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-a32d6b88287f.gif)]
+
 </br>
 <b>５。社内でチャット： </b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-e7e4066cc757.gif)]
+
 </br>
 <b>６。 領収証にスキャン：</b>
-[![Demo CountPages alpha](https://im6.ezgif.com/tmp/ezgif-6-4d1539654684.gif)]
+
 
 <h3>フル映画：</h3></br>
 https://www.kapwing.com/e/5e05f66f8e681f001460fb39
