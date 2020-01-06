@@ -133,48 +133,67 @@ class _ListtaikinState extends State<listtaikin> {
                                       child: Column(
                                         children: <Widget>[
                                           Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height -
-                                                800.0,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                30.0,
+                                            padding: EdgeInsets.all(2.0),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
                                               children: <Widget>[
-                                                Container(
+                                                Flexible(
+                                                  child: Container(
                                                   height: 50.0,
                                                   padding: EdgeInsets.only(
                                                       top: 15.0),
                                                   decoration: BoxDecoration(
-                                                      border: Border.all()),
+                                                      borderRadius: BorderRadius.circular(5.0),
+                                                      color: Colors.cyan[100]),
                                                   width: MediaQuery.of(context)
                                                           .size
-                                                          .width -
-                                                      270.0,
+                                                          .width,
+                                                  child: Text(
+                                                    '日付',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                  flex: 1,
+
+                                                ),
+                                                Flexible(
+                                                  child: Container(
+                                                  height: 50.0,
+                                                  padding: EdgeInsets.only(
+                                                      top: 15.0),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(30.0),
+                                                      color: Colors.cyan[100]),
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width,
                                                   child: Text(
                                                     '出勤の時間',
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
-                                                Container(
+                                                flex: 2,
+                                                ),
+                                                Flexible(
+                                                  child: 
+                                                  Container(
                                                   height: 50.0,
                                                   padding: EdgeInsets.only(
                                                       top: 15.0),
                                                   decoration: BoxDecoration(
-                                                      border: Border.all()),
+                                                      borderRadius: BorderRadius.circular(30.0),
+                                                      color: Colors.cyan[100]),
                                                   width: MediaQuery.of(context)
                                                           .size
-                                                          .width -
-                                                      270.0,
+                                                          .width,
                                                   child: Text(
                                                     '退勤の時間',
                                                     textAlign: TextAlign.center,
                                                   ),
                                                 ),
+                                                flex: 2,
+                                                )
                                               ],
                                             ),
                                           ),
@@ -224,33 +243,55 @@ class _ListtaikinState extends State<listtaikin> {
                                                               .toString() ==
                                                           monthwork)
                                                       ? 
-                                                      Column(
-                                                        children: <Widget>[
                                                           Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .spaceBetween,
                                                           children: <Widget>[
-                                                            Text('$dateformat'),
-                                                            Text('$enterwork'),
-                                                            SizedBox(
-                                                              width: 10.0,
+                                                            Flexible(
+                                                              child: Container(
+                                                                width: MediaQuery.of(context).size.width,
+                                                                child: Text('$dateformat',
+                                                                textAlign: TextAlign.center
+                                                                ),
+                                                              ),
+                                                              flex: 1,
                                                             ),
-                                                            Text('$outwork'),
-                                                            SizedBox(
-                                                              width: 30.0,
+                                                            Flexible(
+                                                              child: Container(
+                                                                width: MediaQuery.of(context).size.width,
+                                                                child: Text('$enterwork',
+                                                                textAlign: TextAlign.center
+                                                                ),
+                                                              ),
+                                                              flex: 2,
+                                                            ),
+                                                            Flexible(
+                                                              child:  Container(
+                                                                width: MediaQuery.of(context).size.width,
+                                                                child: Text('$outwork',
+                                                                textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                              flex: 2,
                                                             )
                                                           ],
                                                         )
-                                                        ],
-                                                      )
                                                       : SizedBox(
                                                           height: 0.0,
                                                         );
                                                 },
                                               )),
-                                          Container(
-                                            width: MediaQuery.of(context).size.width -250.0,
+                                          Row(
+                                            children: <Widget>[
+                                              Flexible(
+                                                child: Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                ),
+                                                flex: 1,
+                                              ),
+                                              Flexible(
+                                                child: Container(
                                             child: RaisedButton(
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -283,7 +324,16 @@ class _ListtaikinState extends State<listtaikin> {
                                               });
                                             },
                                           ),
+                                          ),
+                                                flex: 3,
+                                              ),
+                                              Flexible(
+                                                child: SizedBox(width: 0.0,),
+                                                flex: 1,
+                                              ),
+                                            ],
                                           )
+                                          
                                         ],
                                       ),
                                     )
@@ -293,6 +343,7 @@ class _ListtaikinState extends State<listtaikin> {
                             ));
                       }
                     }
+              return SizedBox(height: 0.0,);
                   });
             } else {
               return CircularProgressIndicator();

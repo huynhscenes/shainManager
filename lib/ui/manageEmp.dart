@@ -353,8 +353,8 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                                                 .toString() +
                                                             '時'
                                                         : datetimenow.hour
-                                                            .toString()) +
-                                                    '時';
+                                                            .toString() +
+                                                    '時');
                                                 nowminuenter =
                                                     (datetimenow.minute < 10
                                                         ? '0' +
@@ -410,8 +410,8 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
                                                                 .toString() +
                                                             '時'
                                                         : datetimenow.hour
-                                                            .toString()) +
-                                                    '時';
+                                                            .toString() +
+                                                    '時');
                                                 nowminuout =
                                                     (datetimenow.minute < 10
                                                         ? '0' +
