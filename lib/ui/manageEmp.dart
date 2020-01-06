@@ -249,7 +249,6 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
   Widget _workingcheck(sldata) {
     if (sldata != null) {
       var todaydatetime = nowyear + nowmonth + nowday;
-      print('this is confirm compare datetime ' + sldata.length.toString());
       for (var data in sldata) {
         if (data.ymdWork == todaydatetime) {
           id = data.id;
@@ -292,9 +291,9 @@ class manageEmpState extends State<manageEmp> with TickerProviderStateMixin {
     // scenes wifi ip android : 192.168.8.82
     // scenes wifi ip ios : 192.168.8.113
     // home my wifi ip : 172.20.10.11
-    print('ip wifi day ne ' + idwifi.toString());
+    // print('ip wifi day ne ' + idwifi.toString());
     if (idwifi != 'ConnectivityResult.none') {
-      print('wifi : on');
+      // print('wifi : on');
       db.getManager().then((results) {
         print(results);
         for (var result in results) {
