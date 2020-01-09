@@ -34,7 +34,7 @@
 
 </br>
 <b>５。社内でチャット： </b>
-![alt text](https://media.giphy.com/media/S3JGVQFDtBV4zeaV6X/giphy.gif)
+[![Demo CountPages alpha](https://media.giphy.com/media/S3JGVQFDtBV4zeaV6X/giphy.gif)]
 </br>
 <b>６。 領収証にスキャン：</b>
 
