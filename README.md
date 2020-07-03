@@ -37,7 +37,7 @@
 ![](https://media.giphy.com/media/RhTCZI7MA62vFUYkzz/giphy.gif)
 
 </br>
-<b>4。タスクを追加すること：（redmine同様） </b>
+<b>4。タスクを追加すること：（redmine,backlog,...同様） </b>
 </br>
 
 ![](https://media.giphy.com/media/UWJtr86yVgSIKcLa1d/giphy.gif)
