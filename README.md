@@ -11,7 +11,6 @@
   ４。社内のチャット（まだ開発しています）back-end: 70% front-end:60%<br/>
   ５。領収証にスキャン：領収証に写真を撮って、サーバーを送って、PYTHONに読み込んでテキストを提出して、このテキストは処理する結果はselenium (ブラウザのオートメーションツール)でhttps://ic.next-cloud.jp/　に書き込む（まだ開発しています）back-end: 100% front-end:30%<br/>
 # shainManager
-# startdaydevelop:2019/12/03
   </span>
 
 </br></br>
