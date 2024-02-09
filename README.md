@@ -61,7 +61,4 @@
 
 ![](https://media.giphy.com/media/TEv6MtAo1xgoKReJgf/giphy.gif)
 
-</br>
-<h3>フル映画：</h3></br>
-https://www.kapwing.com/e/5e05f66f8e681f001460fb39
 
